@@ -3,7 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
 import Lenis from 'lenis';
-import { site, work } from './content.js';
+import { archive, site, work } from './content.js';
 import Nav from './Nav.jsx';
 import Player from './Player.jsx';
 
@@ -172,6 +172,65 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
         </div>
       </section>
 
+      <section id={id('archive')} className="archive" aria-labelledby={ai ? undefined : 'archive-title'}>
+        <div className="archive-head">
+          <h2 id={id('archive-title')} className="archive-title" {...tag('heading · 0.97')}>
+            Archive
+          </h2>
+          <p className="archive-count" aria-hidden="true" {...tag(`count: ${archive.items.length}`)}>
+            V
+          </p>
+        </div>
+        <div className="archive-intro">
+          <p className="archive-line">
+            The first edition. Where it <em>all</em> started.
+          </p>
+          <a className="row-visit archive-v1" href={archive.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined} {...tag('link · v1')}>
+            See v1
+            <Arrow />
+            {!ai && <span className="sr-only"> (opens in a new tab)</span>}
+          </a>
+        </div>
+        <ol className="ledger">
+          {archive.items.map((p, i) => (
+            <li key={p.title} className="entry">
+              <span className="entry-no">{p.no}.</span>
+              <span className="entry-shot">
+                <img src={p.image} alt="" loading="lazy" decoding="async" />
+              </span>
+              <div className="entry-text">
+                <h3 className="entry-title" {...tag(i === 0 ? 'project · archived' : undefined)}>
+                  {p.title}
+                </h3>
+                <p className="entry-line">{p.line}</p>
+              </div>
+              <span className="entry-meta">
+                <span>{p.kind}</span>
+                <span className="entry-stack">{p.stack.join(' · ')}</span>
+              </span>
+              <span className="entry-links">
+                {p.href ? (
+                  <a className="row-visit" href={p.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
+                    Live
+                    <Arrow />
+                    {!ai && <span className="sr-only"> {p.title} (opens in a new tab)</span>}
+                  </a>
+                ) : (
+                  <span className="entry-gone">Retired</span>
+                )}
+                {p.code && (
+                  <a className="row-visit" href={p.code} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
+                    Code
+                    <Arrow />
+                    {!ai && <span className="sr-only"> for {p.title} (opens in a new tab)</span>}
+                  </a>
+                )}
+              </span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
       <section id={id('contact')} className="contact" aria-labelledby={ai ? undefined : 'contact-title'}>
         <div className="contact-media">
           <img className="contact-art" src="/art/whistlejacket.webp" alt="" loading="lazy" decoding="async" />
@@ -316,6 +375,7 @@ export default function App() {
     // the nav turns to ink while it sits over the paper section
     const navSwap = ScrollTrigger.create({
       trigger: el.querySelector('.human .work'),
+      endTrigger: el.querySelector('.human .archive'),
       start: 'top 40px',
       end: 'bottom 40px',
       onToggle: (s) => setLight(s.isActive),
@@ -563,6 +623,14 @@ export default function App() {
       gsap.from('.row', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.human .rows', start: 'top 80%' } });
       gsap.from('.preview', { clipPath: 'inset(0 0 100% 0)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: '.human .rows', start: 'top 75%' } });
 
+      const archiveTitle = new SplitText('.archive-title', { type: 'chars', mask: 'chars', charsClass: 'ch' });
+      gsap.from(archiveTitle.chars, { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: 0.04, scrollTrigger: { trigger: '.human .archive', start: 'top 70%' } });
+      gsap.from('.archive-intro > *', { y: 16, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: '.human .archive', start: 'top 60%' } });
+      gsap.utils.toArray('.entry').forEach((entry) => {
+        gsap.from(entry, { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: entry, start: 'top 90%' } });
+        gsap.from(entry.querySelectorAll('.entry-shot img'), { clipPath: 'inset(0 0 100% 0)', duration: 1.3, ease: 'expo.inOut', scrollTrigger: { trigger: entry, start: 'top 90%' } });
+      });
+
       gsap.fromTo('.contact-art', { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.human .contact', start: 'top bottom', end: 'bottom bottom', scrub: true } });
       const hello = new SplitText('.hello', { type: 'chars' });
       gsap.from(hello.chars, { yPercent: 30, opacity: 0, filter: 'blur(12px)', duration: 1.6, ease: 'expo.out', stagger: 0.07, scrollTrigger: { trigger: '.human .contact', start: 'top 55%' } });
@@ -650,9 +718,15 @@ export default function App() {
                 </li>
               ))}
               <li>
+                <a href="#archive">
+                  <span>Archive</span>
+                  <span className="num" aria-hidden="true">IV</span>
+                </a>
+              </li>
+              <li>
                 <a href="#contact">
                   <span>Contact</span>
-                  <span className="num" aria-hidden="true">IV</span>
+                  <span className="num" aria-hidden="true">V</span>
                 </a>
               </li>
             </ol>

@@ -53,3 +53,58 @@ export const work = [
 ];
 
 export const tapes = [{ title: 'Hideaway', src: '/music/Hideaway.m4a' }];
+
+// The first edition (v1). Earlier, smaller builds, kept as a ledger.
+export const archive = {
+  href: 'https://vincentvportfolio.vercel.app/',
+  items: [
+    {
+      no: 'I',
+      title: 'Order UK',
+      line: 'Restaurants and their orders, run from one dashboard.',
+      kind: 'Full stack',
+      stack: ['React', 'TypeScript', 'Express', 'MongoDB'],
+      href: 'https://orderuk-mern.onrender.com/',
+      image: '/past/order-uk.webp',
+    },
+    {
+      no: 'II',
+      title: 'Coral',
+      line: 'A shop with search, categories and Stripe checkout.',
+      kind: 'E-commerce',
+      stack: ['React', 'TypeScript', 'Zustand', 'Stripe'],
+      href: 'https://coral-eccomerce-client.vercel.app/',
+      code: 'https://github.com/Ultred/Ultred-Coral-Eccomerce',
+      image: '/past/coral.webp',
+    },
+    {
+      no: 'III',
+      title: 'TENTS',
+      line: 'Event scoring and live tabulation. A team capstone.',
+      kind: 'Capstone',
+      stack: ['PHP', 'MySQL', 'jQuery'],
+      // the live site is gone, so it stays on record without a link
+      image: '/past/tents.webp',
+    },
+    {
+      no: 'IV',
+      title: 'Taste Quest',
+      line: 'Recipes to explore, and favourites to keep.',
+      kind: 'Web app',
+      stack: ['React', 'Tailwind', 'Spoonacular API'],
+      href: 'https://taste-quest-olive.vercel.app/',
+      code: 'https://github.com/Ultred/Taste_Quest',
+      image: '/past/taste-quest.webp',
+    },
+    {
+      no: 'V',
+      title: 'Lefty',
+      line: 'A study clone, to get the fundamentals right.',
+      kind: 'Study',
+      stack: ['HTML', 'Tailwind', 'JavaScript'],
+      href: 'https://ultred.github.io/Lefty_Clone/',
+      code: 'https://github.com/Ultred/Lefty_Clone',
+      image: '/past/lefty.webp',
+    },
+  ],
+};
