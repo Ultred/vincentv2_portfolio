@@ -249,7 +249,7 @@ The name card and the lens are the same object. Fixed, 300px wide, a 22% black w
 - **Home:** 10% from the left, vertically centred (desktop); centred near the bottom (mobile).
 - **Docked:** once the hero scrolls 55% past, the collapsible block folds closed (0.7s grid-row transition), the name hides, and the card moves to the bottom-right as a slim player bar (1s expo in-out). Scrolling back restores it.
 - **Taken:** after the first real drag (5px threshold) the card stays a full lens wherever it was left and stops docking. It is clamped 8px inside the viewport on move and resize.
-- **Dragging:** frame lines turn pink with the drag glow; the click that ends a drag is swallowed so index links do not fire.
+- **Dragging:** frame lines turn pink with the drag glow; the click that ends a mouse drag is swallowed so index links do not fire (touch drags end without a click, so no guard is left waiting to eat the next tap). The card sits above the nav (z 11) so its close button stays tappable anywhere; the censor tag sits above both (z 12).
 - **Keyboard:** the grip is a button; arrow keys move the card 20px, 60px with Shift.
 - **What it reveals:** every frame the AI layer is clip-pathed to the card's rectangle, and the three.js machine scene is rendered with a scissor into the same rectangle (translated into the canvas's parallaxed space). The censor tag "AI safe search: on" appears only when the card covers the fresco's censored spot.
 
