@@ -116,11 +116,11 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
                   </span>
                 </button>
                 <span className="row-shots">
-                  {w.shots.map((sh) =>
+                  {w.shots.map((sh, j) =>
                     sh.video ? (
                       <video key={sh.src} className={`row-shot ${sh.fit === 'contain' ? 'is-contain' : ''}`} src={sh.video} poster={sh.src} muted loop playsInline preload="none" aria-hidden="true" />
                     ) : (
-                      <img key={sh.src} className={`row-shot ${sh.fit === 'contain' ? 'is-contain' : ''}`} src={sh.src} alt="" loading="lazy" decoding="async" {...tag('screenshot')} />
+                      <img key={sh.src} className={`row-shot ${sh.fit === 'contain' ? 'is-contain' : ''}`} src={sh.src} alt={ai ? '' : `${w.title}, screenshot ${j + 1}`} loading="lazy" decoding="async" {...tag('screenshot')} />
                     )
                   )}
                 </span>
@@ -141,7 +141,7 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
                   return sh.video ? (
                     <video key={sh.src} className={cls} src={sh.video} poster={sh.src} muted loop playsInline preload="none" data-live={!ai && current && videoOn ? '' : undefined} aria-hidden="true" />
                   ) : (
-                    <img key={sh.src} src={sh.src} alt="" className={cls} aria-hidden="true" loading="lazy" decoding="async" />
+                    <img key={sh.src} src={sh.src} alt={ai ? '' : `${w.title}, screenshot ${j + 1}`} className={cls} aria-hidden="true" loading="lazy" decoding="async" />
                   );
                 })
               )}

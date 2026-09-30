@@ -1,6 +1,7 @@
 // Contact details and project list live here.
 export const site = {
   name: 'Vincent Vinuya',
+  url: 'https://www.vincentv.site',
   role: 'Full stack developer',
   place: 'Pampanga, PH',
   timeZone: 'Asia/Manila',
