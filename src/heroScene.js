@@ -9,6 +9,9 @@ const NEON_PINK = new THREE.Color('#ff2bd6');
 const NEON_CYAN = new THREE.Color('#3df5ff');
 // where Adam's modesty sits on the fresco texture (u, v from bottom-left)
 const CENSOR = new THREE.Vector2(0.179, 0.25);
+// the gap between the two fingertips, and God's head: two more things only the machine remarks on
+const SPARK = new THREE.Vector2(0.378, 0.556);
+const GOD = new THREE.Vector2(0.588, 0.8);
 
 const hologram = () =>
   new THREE.ShaderMaterial({
@@ -49,7 +52,7 @@ const hologram = () =>
 // the fresco's neon twin: its own brushwork traced as glowing line, same texture, same place
 const neonFresco = (map) =>
   new THREE.ShaderMaterial({
-    uniforms: { uMap: { value: map }, uTexel: { value: new THREE.Vector2(1 / 2400, 1 / 1117) }, uTime: { value: 0 }, uCensor: { value: CENSOR }, uBlue: { value: NEON_BLUE }, uPink: { value: NEON_PINK }, uCyan: { value: NEON_CYAN } },
+    uniforms: { uMap: { value: map }, uTexel: { value: new THREE.Vector2(1 / 2400, 1 / 1117) }, uTime: { value: 0 }, uCensor: { value: CENSOR }, uSpark: { value: SPARK }, uBlue: { value: NEON_BLUE }, uPink: { value: NEON_PINK }, uCyan: { value: NEON_CYAN } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: `
       uniform sampler2D uMap;
@@ -57,6 +60,7 @@ const neonFresco = (map) =>
       uniform float uTime;
       uniform vec3 uBlue, uPink, uCyan;
       uniform vec2 uCensor;
+      uniform vec2 uSpark;
       varying vec2 vUv;
       float lum(vec2 o) { return dot(texture2D(uMap, vUv + o * uTexel * 1.6).rgb, vec3(0.299, 0.587, 0.114)); }
       void main() {
@@ -74,9 +78,53 @@ const neonFresco = (map) =>
           float r = fract(sin(dot(block, vec2(12.9898, 78.233))) * 43758.5453);
           col = mix(uBlue * 0.7, uPink, step(0.5, r)) * (0.6 + 0.4 * r);
         }
+        // the spark between the fingertips: a white-hot core, a pink halo, and long anamorphic streaks
+        vec2 s = (vUv - uSpark) * vec2(2.15, 1.0);
+        float pulse = 0.85 + 0.15 * sin(uTime * 2.4);
+        float d0 = length(s);
+        float core = exp(-d0 * 160.0);
+        float halo = exp(-d0 * 22.0);
+        float streakX = exp(-abs(s.y) * 420.0) * exp(-abs(s.x) * 6.0);
+        float streakY = exp(-abs(s.x) * 700.0) * exp(-abs(s.y) * 16.0);
+        float diag = (exp(-abs(s.x - s.y) * 520.0) + exp(-abs(s.x + s.y) * 520.0)) * exp(-d0 * 20.0);
+        col += (vec3(1.0) * core * 3.0 + uPink * halo * 1.1 + uCyan * (streakX * 1.4 + streakY * 1.0) + vec3(0.95, 0.85, 1.0) * diag * 0.8) * pulse;
         gl_FragColor = vec4(col, 1.0);
       }
     `,
+    toneMapped: false,
+  });
+
+// the machine's joke on the bust: a bubble of pink gum, glossy at the rim, lit from the upper left
+const gum = () =>
+  new THREE.ShaderMaterial({
+    uniforms: { uPink: { value: NEON_PINK }, uCyan: { value: NEON_CYAN }, uFade: { value: 1 } },
+    vertexShader: `
+      varying vec3 vNormal;
+      varying vec3 vView;
+      void main() {
+        vec4 view = modelViewMatrix * vec4(position, 1.0);
+        vNormal = normalize(normalMatrix * normal);
+        vView = normalize(-view.xyz);
+        gl_Position = projectionMatrix * view;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uPink, uCyan;
+      uniform float uFade;
+      varying vec3 vNormal;
+      varying vec3 vView;
+      void main() {
+        vec3 n = normalize(vNormal);
+        float fres = pow(1.0 - abs(dot(n, vView)), 2.2);
+        float shine = pow(max(dot(reflect(-normalize(vec3(-0.5, 0.7, 0.6)), n), vView), 0.0), 36.0);
+        vec3 gum = vec3(1.0, 0.36, 0.72);
+        vec3 col = mix(gum * 0.78, uPink, fres) + vec3(1.0) * shine * 0.9;
+        float alpha = clamp(0.86 + fres * 0.14 + shine, 0.0, 1.0);
+        gl_FragColor = vec4(col, alpha * uFade);
+      }
+    `,
+    transparent: true,
+    depthWrite: false,
     toneMapped: false,
   });
 
@@ -169,6 +217,82 @@ export function createHeroScene(canvas, { reduced, onReady }) {
     lens: null,
   };
 
+  // the gum bubble: only in the machine scene, anchored at the lips once the bust has loaded
+  const bubbleMat = gum();
+  const bubbleWire = new THREE.MeshBasicMaterial({ color: NEON_CYAN, wireframe: true, transparent: true, opacity: 0.08, blending: THREE.AdditiveBlending, depthWrite: false });
+  const bubbleGeo = new THREE.SphereGeometry(1, 40, 24);
+  const bubble = new THREE.Group();
+  bubble.add(new THREE.Mesh(bubbleGeo, bubbleMat), new THREE.Mesh(bubbleGeo, bubbleWire));
+  // always drawn over the additive hologram, so the gum stays pink instead of washing out
+  bubble.children.forEach((m) => (m.renderOrder = 10));
+  // a thin ring that flashes out when it pops
+  const popMat = new THREE.MeshBasicMaterial({ color: NEON_PINK, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const pop = new THREE.Mesh(new THREE.RingGeometry(0.96, 1, 48), popMat);
+  // the burst: shreds of gum that fly out, spin and fall
+  const SHREDS = 26;
+  const shredGeo = new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute([-0.5, -0.4, 0, 0.5, -0.3, 0, 0.05, 0.6, 0], 3));
+  const shredMat = new THREE.MeshBasicMaterial({ color: NEON_PINK, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const shreds = new THREE.InstancedMesh(shredGeo, shredMat, SHREDS);
+  shreds.frustumCulled = false;
+  // fixed, evenly spread directions so every pop looks alike
+  const shredDirs = Array.from({ length: SHREDS }, (_, i) => {
+    const a = i * 2.39996, z = 1 - ((i + 0.5) / SHREDS) * 2;
+    const rr = Math.sqrt(1 - z * z);
+    return { d: new THREE.Vector3(Math.cos(a) * rr, z, Math.sin(a) * rr), v: 0.9 + ((i * 37) % 11) / 11, spin: new THREE.Euler(i, i * 1.7, i * 0.6) };
+  });
+  const shredM = new THREE.Matrix4(), shredQ = new THREE.Quaternion(), shredP = new THREE.Vector3(), shredS = new THREE.Vector3(), shredE = new THREE.Euler();
+  // what is left on the lips after the pop
+  const leftover = new THREE.Mesh(bubbleGeo, bubbleMat);
+  pop.renderOrder = shreds.renderOrder = leftover.renderOrder = 10;
+  bubble.visible = pop.visible = shreds.visible = leftover.visible = false;
+  machineStage.add(bubble, pop, shreds, leftover);
+  const mouth = { at: new THREE.Vector3(), out: new THREE.Vector3(0, 0, 1), ready: false };
+  const BUBBLE_R = 0.16;
+  // grows while the lens is over the face, strains, pops, and starts again
+  const blow = { size: 0, popAt: -1, popT: 0, last: 0 };
+  const popCenter = new THREE.Vector3();
+  const mouthOnCanvas = new THREE.Vector3();
+
+  // find the lips on the model: scan the front half of the head for the point that sticks out
+  // furthest (the nose tip), then walk down that same line to the chin; the lips sit between
+  function findMouth(model) {
+    model.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model);
+    const cx = (box.min.x + box.max.x) / 2, cz = (box.min.z + box.max.z) / 2;
+    const ray = new THREE.Raycaster();
+    const o = new THREE.Vector3(), d = new THREE.Vector3();
+    const reach = (y, a) => {
+      o.set(cx + Math.sin(a) * 4, y, cz + Math.cos(a) * 4);
+      d.set(-Math.sin(a), 0, -Math.cos(a));
+      ray.set(o, d);
+      const hit = ray.intersectObject(model, true)[0];
+      return hit ? { y, a, r: Math.hypot(hit.point.x - cx, hit.point.z - cz), p: hit.point.clone() } : null;
+    };
+    let nose = null;
+    for (let y = box.max.y - 0.55; y <= box.max.y - 0.12; y += 0.01) {
+      for (let a = -Math.PI / 2; a <= Math.PI / 2; a += Math.PI / 90) {
+        const h = reach(y, a);
+        if (h && (!nose || h.r > nose.r)) nose = h;
+      }
+    }
+    if (!nose) return;
+    // refine the facing angle at the nose height, then follow it down
+    const line = [];
+    for (let y = nose.y - 0.02; y >= nose.y - 0.34; y -= 0.004) {
+      const h = reach(y, nose.a);
+      if (h) line.push(h);
+    }
+    const chinZone = line.filter((h) => h.y < nose.y - 0.1);
+    if (!chinZone.length) return;
+    const chin = chinZone.reduce((m, h) => (h.r > m.r ? h : m));
+    const lips = reach(nose.y - (nose.y - chin.y) * 0.62, nose.a) ?? chin;
+    mouth.at.copy(lips.p);
+    mouth.out.set(Math.sin(nose.a), -0.35, Math.cos(nose.a)).normalize();
+    mouth.ready = true;
+    state.face = { nose: [nose.y.toFixed(3), ((nose.a * 180) / Math.PI).toFixed(1), nose.r.toFixed(3)], chin: [chin.y.toFixed(3), chin.r.toFixed(3)], lips: lips.p.toArray().map((v) => v.toFixed(3)), box: [box.min.toArray(), box.max.toArray()].map((v) => v.map((n) => n.toFixed(2))) };
+  }
+
+
   new GLTFLoader().load(
     '/models/bust/marble_bust_01_1k.gltf',
     (gltf) => {
@@ -199,6 +323,9 @@ export function createHeroScene(canvas, { reduced, onReady }) {
         o.add(new THREE.Mesh(o.geometry, wireMat));
       }
       machineStage.add(ghost);
+      // measure on the model's own frame, before the stage moves it
+      const probeModel = src.clone(true);
+      findMouth(probeModel);
       onReady?.();
     },
     undefined,
@@ -243,7 +370,8 @@ export function createHeroScene(canvas, { reduced, onReady }) {
       stage.position.set(stageX, wide ? -0.55 : 0.2, 0);
       stage.rotation.y = spin;
     }
-    backdrop.position.x = (wide ? 1.1 : 0.4) - mx * 0.6;
+    // on phones the fresco sits a little right, so the spark between the fingertips stays on screen
+    backdrop.position.x = (wide ? 1.1 : 1.65) - mx * 0.6;
     backdrop.position.y = (wide ? 0.6 : 1.05) + my * 0.3;
     holo.uniforms.uTime.value = reduced ? 1.5 : t;
     neonBackdrop.material.uniforms.uTime.value = reduced ? 1.5 : t;
@@ -252,6 +380,77 @@ export function createHeroScene(canvas, { reduced, onReady }) {
     floorGrid.position.z = reduced ? 0 : (t * 0.25) % 0.5;
 
     const w = canvas.clientWidth, h = canvas.clientHeight;
+
+    // blow the bubble while the lens covers the lips
+    if (mouth.ready) {
+      machineStage.updateMatrixWorld(true);
+      mouthOnCanvas.copy(mouth.at).applyMatrix4(machineStage.matrixWorld).project(camera);
+      const mxp = ((mouthOnCanvas.x + 1) / 2) * w, myp = ((1 - mouthOnCanvas.y) / 2) * h;
+      state.mouthPx = { x: mxp, y: myp };
+      const L = state.lens;
+      const pad = 24;
+      const over = !!L && mxp > L.left - pad && mxp < L.right + pad && myp > L.top - pad && myp < L.bottom + pad;
+      // real time, not frames, so a slow phone blows at the same pace
+      const dt = Math.min(0.1, blow.last ? t - blow.last : 0);
+      blow.last = t;
+      if (reduced) {
+        blow.size = over ? 1 : 0;
+      } else if (blow.popAt >= 0) {
+        // after a pop, a short pause before the next breath
+        if (t - blow.popAt > 1.3) blow.popAt = -1;
+      } else if (over) {
+        blow.size = Math.min(1.12, blow.size + dt * 0.8 * (1.25 - blow.size));
+        if (blow.size > 1.1) {
+          blow.popAt = blow.popT = t;
+          popCenter.copy(mouth.at).addScaledVector(mouth.out, BUBBLE_R * blow.size * 0.8);
+          blow.size = 0;
+        }
+      } else {
+        blow.size = Math.max(0, blow.size - dt * 2.4);
+      }
+      // it quivers harder as it nears bursting
+      const strain = Math.max(0, blow.size - 0.85) * 4;
+      const wobble = reduced ? 1 : 1 + Math.sin(t * (9 + strain * 30)) * (0.02 + strain * 0.03) * blow.size;
+      const rad = BUBBLE_R * blow.size;
+      bubble.visible = rad > 0.004;
+      bubble.scale.set(rad * wobble, rad / wobble, rad * wobble);
+      bubble.position.copy(mouth.at).addScaledVector(mouth.out, rad * 0.8);
+
+      // the pop: a flash ring, shreds that fly and fall, and a bit of gum left on the lips
+      const since = t - blow.popT;
+      const popping = !reduced && blow.popT > 0;
+      pop.visible = popping && since < 0.3;
+      if (pop.visible) {
+        const k = since / 0.3;
+        pop.position.copy(popCenter);
+        pop.lookAt(camera.position);
+        pop.scale.setScalar(BUBBLE_R * (1 + k * 1.6));
+        popMat.opacity = (1 - k) ** 2;
+      }
+      shreds.visible = popping && since < 0.8;
+      if (shreds.visible) {
+        const k = since / 0.8;
+        for (let i = 0; i < SHREDS; i++) {
+          const sd = shredDirs[i];
+          shredP.copy(popCenter).addScaledVector(sd.d, BUBBLE_R * (0.9 + sd.v * since * 3.2));
+          shredP.y -= 1.4 * since * since;
+          shredE.set(sd.spin.x + since * 9, sd.spin.y + since * 7, sd.spin.z);
+          shredQ.setFromEuler(shredE);
+          shredS.setScalar(0.035 * (1 - k * 0.7));
+          shreds.setMatrixAt(i, shredM.compose(shredP, shredQ, shredS));
+        }
+        shreds.instanceMatrix.needsUpdate = true;
+        shredMat.opacity = 1 - k * k;
+      }
+      leftover.visible = popping && since < 1.2;
+      if (leftover.visible) {
+        const k = since / 1.2;
+        const lr = BUBBLE_R * 0.28 * (1 - k * k);
+        leftover.scale.set(lr * 1.4, lr * 0.6, lr);
+        leftover.position.copy(mouth.at).addScaledVector(mouth.out, lr * 0.4);
+      }
+    }
+
     renderer.setScissorTest(false);
     renderer.setClearColor(0x0b0b0b, 1);
     renderer.clear();
@@ -276,15 +475,16 @@ export function createHeroScene(canvas, { reduced, onReady }) {
   return {
     state,
     render: frame,
-    // where the censored spot lands on the canvas, in CSS pixels
-    censorPoint() {
+    // where a spot on the fresco lands on the canvas, in CSS pixels
+    frescoPoint(uv = CENSOR) {
       probe.set(
-        backdrop.position.x + (CENSOR.x - 0.5) * backdrop.scale.x,
-        backdrop.position.y + (CENSOR.y - 0.5) * backdrop.scale.y,
+        backdrop.position.x + (uv.x - 0.5) * backdrop.scale.x,
+        backdrop.position.y + (uv.y - 0.5) * backdrop.scale.y,
         backdrop.position.z
       ).project(camera);
       return { x: ((probe.x + 1) / 2) * canvas.clientWidth, y: ((1 - probe.y) / 2) * canvas.clientHeight };
     },
+    spots: { censor: CENSOR, spark: SPARK, god: GOD },
     dispose() {
       window.removeEventListener('resize', resize);
       renderer.dispose();

@@ -51,6 +51,14 @@ function Grip() {
   );
 }
 
+// the machine has opinions about the hour in Manila
+function clockNote(time) {
+  const h = Number(time.slice(0, 2));
+  if (h < 6) return 'local time · human probably asleep';
+  if (h < 9) return 'local time · coffee not found';
+  return 'local time';
+}
+
 // The page is drawn twice: the human layer everyone reads, and an AI layer the card reveals.
 function Sections({ ai, openScreens, active, shot, setShot, select, intend, step, videoOn, setVideoOn, time, canvasRef }) {
   const tag = (label) => (ai ? { 'data-ai': label } : {});
@@ -66,7 +74,7 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
         )}
         <div className="hero-foot">
           <p {...tag('location · 0.99')}>{site.place}</p>
-          <p {...tag('local time')}>
+          <p {...tag(clockNote(time))}>
             Manila <time>{time}</time>
           </p>
         </div>
@@ -201,7 +209,7 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
                       <span className="entry-title">
                         <span className="entry-no">{p.no}.</span> {p.title}
                       </span>
-                      <span className={`entry-kind ${p.note ? 'is-note' : ''}`}>{p.note ?? p.kind}</span>
+                      <span className={`entry-kind ${p.note ? 'is-note' : ''}`}>{ai && p.note ? '404 · gone fishing' : (p.note ?? p.kind)}</span>
                     </span>
                   </>
                 );
@@ -231,6 +239,7 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
       <section id={id('contact')} className="contact" aria-labelledby={ai ? undefined : 'contact-title'}>
         <div className="contact-media">
           <img className="contact-art" src="/art/whistlejacket.webp" alt="" loading="lazy" decoding="async" />
+          {ai && <span className="egg-box egg-horse" data-ai="dog · 0.51" />}
         </div>
         <div className="contact-body">
           <h2 id={id('contact-title')} className="hello" {...tag('greeting · 0.99')}>
@@ -266,6 +275,7 @@ export default function App() {
   const root = useRef(null);
   const card = useRef(null);
   const aiLayer = useRef(null);
+  const aiWindow = useRef(null);
   const humanCanvas = useRef(null);
   const time = useManilaTime();
   const [active, setActive] = useState(0);
@@ -288,16 +298,26 @@ export default function App() {
   const step = (d) => setShot((v) => (v + d + work[active].shots.length) % work[active].shots.length);
   useEffect(() => setShot(0), [active]);
 
-  // on phones each clip plays on its own while it is on screen; a tap pauses or resumes it
+  // on phones each clip plays on its own while it is on screen; a tap pauses or resumes it.
+  // Its AI twin plays along, so the lens shows it moving too.
   useEffect(() => {
     if (prefersReduced()) return;
     const vids = [...document.querySelectorAll('.human .row-shots video')];
+    const twinOf = (v) => document.querySelector(`.ai-layer .row-shots video[src="${v.getAttribute('src')}"]`);
+    const play = (v) => {
+      v.play().catch(() => {});
+      twinOf(v)?.play().catch(() => {});
+    };
+    const pause = (v) => {
+      v.pause();
+      twinOf(v)?.pause();
+    };
     const paused = new WeakSet();
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => {
-          if (e.isIntersecting && !paused.has(e.target)) e.target.play().catch(() => {});
-          else e.target.pause();
+          if (e.isIntersecting && !paused.has(e.target)) play(e.target);
+          else pause(e.target);
         }),
       { threshold: 0.5 }
     );
@@ -305,10 +325,10 @@ export default function App() {
       const v = e.currentTarget;
       if (v.paused) {
         paused.delete(v);
-        v.play().catch(() => {});
+        play(v);
       } else {
         paused.add(v);
-        v.pause();
+        pause(v);
       }
     };
     vids.forEach((v) => {
@@ -342,6 +362,7 @@ export default function App() {
     const el = root.current;
     const lens = card.current;
     const layer = aiLayer.current;
+    const win = aiWindow.current;
 
     let lenis;
     if (!reduced) {
@@ -386,6 +407,7 @@ export default function App() {
       .then(({ createHeroScene }) => {
         if (gone) return;
         scene = createHeroScene(humanCanvas.current, { reduced });
+        if (import.meta.env.DEV) window.__heroScene = scene;
         el.classList.add('has-gl');
       })
       .catch(() => {
@@ -542,22 +564,50 @@ export default function App() {
 
     // the AI layer is clipped to wherever the card sits, every frame
     const human = el.querySelector('.human');
-    const censorTag = el.querySelector('.censor-tag');
+    const spotTags = [...el.querySelectorAll('.censor-tag')];
+    // the horse on the Hello page gets a detection box sized to its head, placed over the cover-fit painting
+    const horse = layer.querySelector('.egg-horse');
+    const horseArt = layer.querySelector('.contact-art');
+    const HEAD = { u: 0.73, v: 0.24, w: 0.15, h: 0.2 };
+    const placeHorse = () => {
+      const nw = horseArt.naturalWidth, nh = horseArt.naturalHeight;
+      // the painting zooms with the scroll, so work from its rendered box, not its layout box
+      const box = horseArt.getBoundingClientRect(), media = horseArt.parentElement.getBoundingClientRect();
+      if (!box.width || !nw) return;
+      const k = Math.max(box.width / nw, box.height / nh);
+      const [px, py] = getComputedStyle(horseArt).objectPosition.split(' ').map((v) => parseFloat(v) / 100);
+      const dw = nw * k, dh = nh * k;
+      const ox = box.left - media.left + (box.width - dw) * px, oy = box.top - media.top + (box.height - dh) * py;
+      Object.assign(horse.style, { left: `${ox + HEAD.u * dw}px`, top: `${oy + HEAD.v * dh}px`, width: `${HEAD.w * dw}px`, height: `${HEAD.h * dh}px` });
+    };
+    horseArt.addEventListener('load', placeHorse);
+    window.addEventListener('resize', placeHorse);
+    placeHorse();
     const heroEl = el.querySelector('.human .hero');
     const onPointer = (e) => {
       scene?.state.target.set((e.clientX / window.innerWidth - 0.5) * 2, (e.clientY / window.innerHeight - 0.5) * 2);
     };
     if (!reduced) window.addEventListener('pointermove', onPointer, { passive: true });
-    // on touch screens the lens steps aside while a finger is scrolling, so it never trails
-    let touchScrolling = false;
-    let scrollIdle;
-    const onScroll = () => {
-      if (fine) return;
-      touchScrolling = true;
-      clearTimeout(scrollIdle);
-      scrollIdle = setTimeout(() => (touchScrolling = false), 140);
+    // on touch screens the page scrolls on its own thread, so a lens cut in page space trails the finger.
+    // There the AI layer sits in a fixed window cut to the card (which never moves with the scroll), and
+    // slides up with the page: on the compositor through a scroll timeline where the browser has one,
+    // otherwise from the scroll event.
+    const touchLens = !fine;
+    const scrollTimeline = touchLens && CSS.supports('animation-timeline: scroll()');
+    const docEl = document.documentElement;
+    let scrollMax = -1;
+    const follow = () => {
+      if (!scrollTimeline) layer.style.transform = `translate3d(0, ${-window.scrollY}px, 0)`;
     };
-    window.addEventListener('scroll', onScroll, { passive: true });
+    if (touchLens) {
+      el.classList.add('is-touch');
+      if (scrollTimeline) el.classList.add('has-scroll-timeline');
+      window.addEventListener('scroll', follow, { passive: true });
+    }
+    // the AI copy of the sticky work preview cannot stick inside the fixed window, so it is moved by hand
+    const humanPreview = el.querySelector('.human .preview');
+    const aiPreview = layer.querySelector('.preview');
+    let aiPreviewShift = 0;
     const viewfinder = lens.querySelector('.card-view');
 
     const frame = () => {
@@ -568,18 +618,21 @@ export default function App() {
       }
       const vf = viewfinder.getBoundingClientRect();
       const r = vf.height > 0 ? vf : lens.getBoundingClientRect();
-      const top = r.top + window.scrollY;
-      if (touchScrolling) {
-        layer.style.clipPath = 'inset(50%)';
-        censorTag.classList.remove('is-on');
-        if (scene) {
-          scene.state.lens = null;
-          scene.render(performance.now());
+      if (horseArt.getBoundingClientRect().top < window.innerHeight) placeHorse();
+      if (touchLens) {
+        const max = docEl.scrollHeight - docEl.clientHeight;
+        if (max !== scrollMax) el.style.setProperty('--scroll-max', `${(scrollMax = max)}px`);
+        follow();
+        win.style.clipPath = `inset(${r.top}px ${win.clientWidth - r.right}px ${win.clientHeight - r.bottom}px ${r.left}px)`;
+        if (humanPreview.offsetParent) {
+          const d = humanPreview.getBoundingClientRect().top - aiPreview.getBoundingClientRect().top;
+          if (Math.abs(d) > 0.5) aiPreview.style.transform = `translate3d(0, ${(aiPreviewShift += d)}px, 0)`;
         }
-        return;
+      } else {
+        const top = r.top + window.scrollY;
+        const w = human.offsetWidth, h = human.offsetHeight;
+        layer.style.clipPath = `inset(${top}px ${w - r.right}px ${h - (top + r.height)}px ${r.left}px)`;
       }
-      const w = human.offsetWidth, h = human.offsetHeight;
-      layer.style.clipPath = `inset(${top}px ${w - r.right}px ${h - (top + r.height)}px ${r.left}px)`;
       const hr = heroEl.getBoundingClientRect();
       if (scene && hr.bottom > 0) {
         scene.state.scroll = Math.min(1, Math.max(0, -hr.top / hr.height));
@@ -588,13 +641,15 @@ export default function App() {
         const cr = humanCanvas.current.getBoundingClientRect();
         scene.state.lens = { left: r.left - cr.left, top: r.top - cr.top, right: r.right - cr.left, bottom: r.bottom - cr.top, width: r.width, height: r.height };
         scene.render(performance.now());
-        const c = scene.censorPoint();
-        const cx = c.x + cr.left, cy = c.y + cr.top;
-        const hit = cx > r.left && cx < r.right && cy > r.top && cy < r.bottom;
-        censorTag.classList.toggle('is-on', hit);
-        if (hit) censorTag.style.transform = `translate(${cx}px, ${cy}px)`;
+        for (const tagEl of spotTags) {
+          const c = scene.frescoPoint(scene.spots[tagEl.dataset.spot]);
+          const cx = c.x + cr.left, cy = c.y + cr.top;
+          const hit = cx > r.left && cx < r.right && cy > r.top && cy < r.bottom;
+          tagEl.classList.toggle('is-on', hit);
+          if (hit) tagEl.style.transform = `translate(${cx}px, ${cy}px)`;
+        }
       } else {
-        censorTag.classList.remove('is-on');
+        spotTags.forEach((t) => t.classList.remove('is-on'));
       }
     };
     gsap.ticker.add(frame);
@@ -685,8 +740,9 @@ export default function App() {
       closeBtn.removeEventListener('click', closeView);
       el.removeEventListener('click', onAnchor);
       gone = true;
-      window.removeEventListener('scroll', onScroll);
-      clearTimeout(scrollIdle);
+      window.removeEventListener('scroll', follow);
+      horseArt.removeEventListener('load', placeHorse);
+      window.removeEventListener('resize', placeHorse);
       scene?.dispose();
       ctx.revert();
       lenis?.destroy();
@@ -701,14 +757,23 @@ export default function App() {
         <Sections openScreens={setScreens} active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} canvasRef={humanCanvas} />
       </main>
 
-      <div ref={aiLayer} className="ai-layer" aria-hidden="true" inert>
-        <Sections ai active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} />
+      {/* on desktop this wrapper has no box; on touch screens it is the fixed window cut to the card */}
+      <div ref={aiWindow} className="ai-window">
+        <div ref={aiLayer} className="ai-layer" aria-hidden="true" inert>
+          <Sections ai active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} />
+        </div>
       </div>
 
       <Gallery item={screens} onClose={() => setScreens(null)} />
 
-      <p className="censor-tag" aria-hidden="true">
+      <p className="censor-tag" data-spot="censor" aria-hidden="true">
         <span>AI safe search: on</span>
+      </p>
+      <p className="censor-tag" data-spot="spark" aria-hidden="true">
+        <span>handshake · 200 OK</span>
+      </p>
+      <p className="censor-tag" data-spot="god" aria-hidden="true">
+        <span>admin · sudo access</span>
       </p>
 
       <aside ref={card} className={`card ${docked ? 'is-docked' : ''}`} aria-label={site.name}>

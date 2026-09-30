@@ -1465,6 +1465,39 @@ em {
   }
 }
 
+/* desktop: the window around the AI layer has no box of its own */
+.ai-window {
+  display: contents;
+}
+
+/* touch screens: the AI layer sits in a fixed window cut to the card and slides with the scroll,
+   so the lens stays put while a finger scrolls instead of trailing it */
+.is-touch .ai-window {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+  clip-path: inset(50%);
+}
+
+.is-touch .ai-layer {
+  clip-path: none;
+  will-change: transform;
+}
+
+@keyframes ai-follow {
+  to {
+    transform: translate3d(0, calc(-1 * var(--scroll-max, 0px)), 0);
+  }
+}
+
+.has-scroll-timeline .ai-layer {
+  animation: ai-follow linear both;
+  animation-timeline: scroll(root block);
+}
+
 /* the AI layer: same layout, read the way a model would, in neon */
 .ai-layer {
   --neon-blue: #2b4bff;
@@ -1616,6 +1649,12 @@ em {
 
 .ai-layer .entry-shot img {
   filter: none;
+}
+
+/* a detection box drawn over part of a painting; the label comes from [data-ai] */
+.ai-layer .egg-box {
+  position: absolute;
+  outline-offset: 0;
 }
 
 /* a joke that only the machine view gets */
