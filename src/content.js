@@ -62,7 +62,8 @@ export const archive = {
       no: 'I',
       title: 'Order UK',
       kind: 'Full stack',
-      href: 'https://orderuk-mern.onrender.com/',
+      // the Render service was suspended, so it stays on record without a link
+      note: 'Retired',
       image: '/past/order-uk.webp',
     },
     {
