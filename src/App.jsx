@@ -10,6 +10,9 @@ import Gallery from './Gallery.jsx';
 
 const ROMAN = ['I', 'II', 'III', 'IV'];
 
+// the 3D scene is its own chunk; start fetching it the moment the app boots, not after the first render
+const heroSceneModule = import('./heroScene.js');
+
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -283,6 +286,8 @@ export default function App() {
   const [docked, setDocked] = useState(false);
   const [shot, setShot] = useState(0);
   const [videoOn, setVideoOn] = useState(() => !prefersReduced());
+  // videos hold off until the intro is under way, so on a first visit the 3D scene gets the bandwidth
+  const [mediaReady, setMediaReady] = useState(false);
   const [screens, setScreens] = useState(null);
   const hoverTimer = useRef(null);
 
@@ -299,19 +304,12 @@ export default function App() {
   useEffect(() => setShot(0), [active]);
 
   // on phones each clip plays on its own while it is on screen; a tap pauses or resumes it.
-  // Its AI twin plays along, so the lens shows it moving too.
+  // Its AI twin plays along whenever the lens is over it (see the frame loop).
   useEffect(() => {
     if (prefersReduced()) return;
     const vids = [...document.querySelectorAll('.human .row-shots video')];
-    const twinOf = (v) => document.querySelector(`.ai-layer .row-shots video[src="${v.getAttribute('src')}"]`);
-    const play = (v) => {
-      v.play().catch(() => {});
-      twinOf(v)?.play().catch(() => {});
-    };
-    const pause = (v) => {
-      v.pause();
-      twinOf(v)?.pause();
-    };
+    const play = (v) => v.play().catch(() => {});
+    const pause = (v) => v.pause();
     const paused = new WeakSet();
     const io = new IntersectionObserver(
       (entries) =>
@@ -341,17 +339,12 @@ export default function App() {
     };
   }, []);
 
-  // only the video on show plays, and only while the visitor wants it; its AI twin follows along
+  // only the video on show plays: the live one, once the page has settled, and only where the preview is
+  // actually displayed (phones hide it). Its AI twin is started by the lens, only when the lens is over it.
   useEffect(() => {
     document.querySelectorAll('.human .preview-frame video').forEach((v) => {
-      const twin = document.querySelector(`.ai-layer .preview-frame video[src="${v.getAttribute('src')}"]`);
-      if (v.hasAttribute('data-live')) {
-        v.play().catch(() => {});
-        twin?.play().catch(() => {});
-      } else {
-        v.pause();
-        twin?.pause();
-      }
+      if (mediaReady && v.hasAttribute('data-live') && v.offsetParent) v.play().catch(() => {});
+      else v.pause();
     });
   });
 
@@ -403,15 +396,35 @@ export default function App() {
     // the 3D scene is its own chunk, so the page paints before three.js arrives
     let scene = null;
     let gone = false;
-    import('./heroScene.js')
+    // the intro waits for the scene (model loaded, shaders compiled, textures up), so none of that work
+    // lands mid-animation; a slow connection gets the intro after 2.5s anyway, over the static painting
+    let startIntro = () => {};
+    let introStarted = false;
+    let mediaTimer;
+    const beginIntro = () => {
+      if (introStarted) return;
+      introStarted = true;
+      startIntro();
+      mediaTimer = setTimeout(() => setMediaReady(true), 1200);
+    };
+    const introCap = setTimeout(beginIntro, 2500);
+    heroSceneModule
       .then(({ createHeroScene }) => {
         if (gone) return;
-        scene = createHeroScene(humanCanvas.current, { reduced });
+        scene = createHeroScene(humanCanvas.current, {
+          reduced,
+          art: el.querySelector('.human .hero-art'),
+          onReady: () => {
+            if (gone) return;
+            el.classList.add('has-gl');
+            beginIntro();
+          },
+        });
         if (import.meta.env.DEV) window.__heroScene = scene;
-        el.classList.add('has-gl');
       })
       .catch(() => {
         scene = null;
+        beginIntro();
       });
     const intro = { v: reduced ? 1 : 0 };
 
@@ -610,12 +623,20 @@ export default function App() {
     const aiPreview = layer.querySelector('.preview');
     let aiPreviewShift = 0;
     const viewfinder = lens.querySelector('.card-view');
+    const videoPairs = [...el.querySelectorAll('.human .preview-frame video, .human .row-shots video')]
+      .map((v) => [v, layer.querySelector(`${v.closest('.row-shots') ? '.row-shots' : '.preview-frame'} video[src="${v.getAttribute('src')}"]`)])
+      .filter(([, twin]) => twin);
 
     const frame = () => {
-      const live = el.querySelector('.human .preview-frame video[data-live]');
-      if (live) {
-        const twin = el.querySelector(`.ai-layer .preview-frame video[src="${live.getAttribute('src')}"]`);
-        if (twin && Math.abs(twin.currentTime - live.currentTime) > 0.25) twin.currentTime = live.currentTime;
+      // a video's AI twin only plays (and only downloads) while the lens is over it, in step with the original
+      const lensBox = (viewfinder.getBoundingClientRect().height > 0 ? viewfinder : lens).getBoundingClientRect();
+      for (const [human, twin] of videoPairs) {
+        const t = twin.getBoundingClientRect();
+        const under = !human.paused && t.width > 0 && t.right > lensBox.left && t.left < lensBox.right && t.bottom > lensBox.top && t.top < lensBox.bottom;
+        if (under) {
+          if (twin.paused) twin.play().catch(() => {});
+          if (Math.abs(twin.currentTime - human.currentTime) > 0.25) twin.currentTime = human.currentTime;
+        } else if (!twin.paused) twin.pause();
       }
       const vf = viewfinder.getBoundingClientRect();
       const r = vf.height > 0 ? vf : lens.getBoundingClientRect();
@@ -696,13 +717,16 @@ export default function App() {
     const ctx = gsap.context(() => {
       if (reduced) {
         el.classList.add('is-ready');
+        startIntro = () => {};
         return;
       }
 
       // intro: the frame inks itself in, then the painting surfaces out of the dark
       const title = new SplitText('.card-title', { type: 'lines', mask: 'lines', linesClass: 'ln' });
       const speed = quick ? 0.45 : 1;
-      const tl = gsap.timeline({ defaults: { ease: 'expo.out' }, onStart: () => el.classList.add('is-ready') });
+      const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' }, onStart: () => el.classList.add('is-ready') });
+      startIntro = () => tl.play();
+      if (introStarted) tl.play();
       tl.fromTo('.frame-line', { scale: 0 }, { scale: 1, duration: 0.7 * speed, ease: 'power3.inOut', stagger: 0.18 * speed })
         .to(intro, { v: 1, duration: 2.6 * speed, ease: 'expo.out' }, 0.3 * speed)
         .fromTo('.hero-media', { opacity: 0 }, { opacity: 1, duration: 1.6 * speed, ease: 'power2.out' }, 0.3 * speed)
@@ -744,6 +768,8 @@ export default function App() {
       window.removeEventListener('pointercancel', onUp);
       lens.removeEventListener('keydown', onKey);
       clearTimeout(landing);
+      clearTimeout(introCap);
+      clearTimeout(mediaTimer);
       closeBtn.removeEventListener('click', closeView);
       el.removeEventListener('click', onAnchor);
       gone = true;

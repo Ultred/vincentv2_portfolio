@@ -199,15 +199,25 @@ em {
   inset: 0;
   width: 100%;
   height: 100%;
-  display: none;
 }
 
-.has-gl .hero-canvas {
-  display: block;
+/* the canvas is laid out (and sized) from the start, under the static painting; the painting stays on
+   top until the 3D scene is ready, then fades out over it */
+.hero-art {
+  transition: opacity 0.8s var(--ease);
 }
 
 .has-gl .hero-art {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* until the intro starts, its pieces stay hidden, so they never flash in and then vanish */
+.app:not(.is-ready) .human .hero-media,
+.app:not(.is-ready) .human .hero-foot,
+.app:not(.is-ready) .nav,
+.app:not(.is-ready) .card {
+  visibility: hidden;
 }
 
 /* the card doubles as the lens onto the AI layer */

@@ -136,7 +136,7 @@ function plinthParts() {
   ];
 }
 
-export function createHeroScene(canvas, { reduced, onReady }) {
+export function createHeroScene(canvas, { reduced, onReady, art }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 820 ? 1.25 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -170,8 +170,16 @@ export function createHeroScene(canvas, { reduced, onReady }) {
   rim.position.set(3.5, 2.5, -4);
   human.add(rim);
 
-  const fresco = new THREE.TextureLoader().load('/art/creation-of-adam.webp');
+  // the painting is already on the page as an <img>; reuse it rather than fetching and decoding it again
+  const fresco = new THREE.Texture();
   fresco.colorSpace = THREE.SRGBColorSpace;
+  const setArt = (img) => {
+    fresco.image = img;
+    fresco.needsUpdate = true;
+  };
+  if (art?.complete && art.naturalWidth) setArt(art);
+  else if (art) art.addEventListener('load', () => setArt(art), { once: true });
+  else new THREE.ImageLoader().load('/art/creation-of-adam.webp', setArt);
   const backdrop = new THREE.Mesh(
     new THREE.PlaneGeometry(1, 1),
     new THREE.MeshBasicMaterial({ map: fresco, color: 0x7a7a7a, toneMapped: false })
@@ -338,11 +346,34 @@ export function createHeroScene(canvas, { reduced, onReady }) {
       // measure on the model's own frame, before the stage moves it
       const probeModel = src.clone(true);
       findMouth(probeModel);
-      onReady?.();
+      warmUp(src);
     },
     undefined,
     () => onReady?.()
   );
+
+  // compile every shader and upload every texture before the intro plays, so neither the first frame
+  // nor the first look through the lens stalls. Where the browser can, shaders compile off the main thread.
+  function warmUp(model) {
+    resize();
+    camera.position.set(0, 0.95, 8);
+    camera.lookAt(lookAt);
+    const upload = () => {
+      if (fresco.image) renderer.initTexture(fresco);
+      model.traverse((o) => {
+        if (!o.isMesh) return;
+        for (const key of ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'aoMap']) if (o.material[key]) renderer.initTexture(o.material[key]);
+      });
+    };
+    const scenes = [human, machine];
+    const compiled = renderer.compileAsync
+      ? Promise.all(scenes.map((sc) => renderer.compileAsync(sc, camera)))
+      : Promise.resolve(scenes.forEach((sc) => renderer.compile(sc, camera)));
+    compiled
+      .then(upload)
+      .catch(() => {})
+      .finally(() => onReady?.());
+  }
 
   let dpr = 1, wide = true;
   function resize() {
