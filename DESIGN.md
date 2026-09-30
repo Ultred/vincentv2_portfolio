@@ -265,8 +265,8 @@ Each row is a full-width select button (Roman numeral, project name, serif line,
 ### Preview Frame
 A sticky 16:10 figure: stone mat, 10px inset, 1px ink border. All shots are stacked and the current one wipes in from the top (0.9s). The caption carries the Roman number, "title — kind", and shot ticks: ‹ I II III › in Bodoni at 35% opacity, the active tick at full ink with `aria-pressed`. Video shots get a 34px round ink toggle bottom-right; only the visible video plays, and only while toggled on.
 
-### Archive Ledger
-The v1 projects, on paper after Work, as a ledger rather than a grid. The heading is the one place a paper page uses the giant Bodoni word ("Archive"), so the past edition speaks in serif while current Work names in grotesk. One serif line and a "See v1" visit link sit under the ink rule. Each entry is one row: Roman numeral, a 16:10 stone-matted grayscale thumbnail (true colour under the lens), the title at a smaller headline size with its serif line, kind and stack as plain text (no chips), then Live/Code visit links, or an italic "Retired" when the site is gone. Hovering an entry sharpens and scales its thumbnail and dims the other titles. At 1100px the meta folds under the text; at 820px each entry stacks. The nav stays ink across Work and Archive.
+### Archive Strip
+The v1 projects as a slim separator between Work and Contact, not a full section. An ink rule, then one line: Bodoni italic "Archive", a mid-gray "The first edition.", and a "See v1" visit link on the right. Below it, the five projects in one row, each a whole-item link: a small stone-matted grayscale thumbnail (true colour under the lens), a Roman numeral with the title, and the kind (or an italic "Retired" when the site is gone, with no link). Hovering one sharpens its thumbnail and dims the other titles. At 820px the row becomes a horizontal snap-scrolling strip. It is not in the card index.
 
 ### Blog Placeholder
 The dark-page pattern alone: dimmed fresco, the giant Bodoni "Blog", one line, a pill back to the portfolio.

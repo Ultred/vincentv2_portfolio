@@ -173,61 +173,45 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
       </section>
 
       <section id={id('archive')} className="archive" aria-labelledby={ai ? undefined : 'archive-title'}>
-        <div className="archive-head">
-          <h2 id={id('archive-title')} className="archive-title" {...tag('heading · 0.97')}>
+        <div className="archive-bar">
+          <h2 id={id('archive-title')} className="archive-title" {...tag('archive · v1')}>
             Archive
           </h2>
-          <p className="archive-count" aria-hidden="true" {...tag(`count: ${archive.items.length}`)}>
-            V
-          </p>
-        </div>
-        <div className="archive-intro">
-          <p className="archive-line">
-            The first edition. Where it <em>all</em> started.
-          </p>
-          <a className="row-visit archive-v1" href={archive.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined} {...tag('link · v1')}>
+          <p className="archive-line">The first edition.</p>
+          <a className="row-visit" href={archive.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
             See v1
             <Arrow />
             {!ai && <span className="sr-only"> (opens in a new tab)</span>}
           </a>
         </div>
         <ol className="ledger">
-          {archive.items.map((p, i) => (
-            <li key={p.title} className="entry">
-              <span className="entry-no">{p.no}.</span>
-              <span className="entry-shot">
-                <img src={p.image} alt="" loading="lazy" decoding="async" />
-              </span>
-              <div className="entry-text">
-                <h3 className="entry-title" {...tag(i === 0 ? 'project · archived' : undefined)}>
-                  {p.title}
-                </h3>
-                <p className="entry-line">{p.line}</p>
-              </div>
-              <span className="entry-meta">
-                <span>{p.kind}</span>
-                <span className="entry-stack">{p.stack.join(' · ')}</span>
-              </span>
-              <span className="entry-links">
+          {archive.items.map((p) => {
+            const inner = (
+              <>
+                <span className="entry-shot">
+                  <img src={p.image} alt="" loading="lazy" decoding="async" />
+                </span>
+                <span className="entry-text">
+                  <span className="entry-title">
+                    <span className="entry-no">{p.no}.</span> {p.title}
+                  </span>
+                  <span className="entry-kind">{p.href ? p.kind : 'Retired'}</span>
+                </span>
+              </>
+            );
+            return (
+              <li key={p.title} className="entry">
                 {p.href ? (
-                  <a className="row-visit" href={p.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
-                    Live
-                    <Arrow />
-                    {!ai && <span className="sr-only"> {p.title} (opens in a new tab)</span>}
+                  <a href={p.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
+                    {inner}
+                    {!ai && <span className="sr-only"> (opens in a new tab)</span>}
                   </a>
                 ) : (
-                  <span className="entry-gone">Retired</span>
+                  <div>{inner}</div>
                 )}
-                {p.code && (
-                  <a className="row-visit" href={p.code} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
-                    Code
-                    <Arrow />
-                    {!ai && <span className="sr-only"> for {p.title} (opens in a new tab)</span>}
-                  </a>
-                )}
-              </span>
-            </li>
-          ))}
+              </li>
+            );
+          })}
         </ol>
       </section>
 
@@ -623,13 +607,7 @@ export default function App() {
       gsap.from('.row', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.human .rows', start: 'top 80%' } });
       gsap.from('.preview', { clipPath: 'inset(0 0 100% 0)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: '.human .rows', start: 'top 75%' } });
 
-      const archiveTitle = new SplitText('.archive-title', { type: 'chars', mask: 'chars', charsClass: 'ch' });
-      gsap.from(archiveTitle.chars, { yPercent: 110, duration: 1.2, ease: 'expo.out', stagger: 0.04, scrollTrigger: { trigger: '.human .archive', start: 'top 70%' } });
-      gsap.from('.archive-intro > *', { y: 16, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.08, scrollTrigger: { trigger: '.human .archive', start: 'top 60%' } });
-      gsap.utils.toArray('.entry').forEach((entry) => {
-        gsap.from(entry, { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', scrollTrigger: { trigger: entry, start: 'top 90%' } });
-        gsap.from(entry.querySelectorAll('.entry-shot img'), { clipPath: 'inset(0 0 100% 0)', duration: 1.3, ease: 'expo.inOut', scrollTrigger: { trigger: entry, start: 'top 90%' } });
-      });
+      gsap.from('.archive-bar > *, .entry', { y: 16, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.06, scrollTrigger: { trigger: '.human .archive', start: 'top 85%' } });
 
       gsap.fromTo('.contact-art', { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.human .contact', start: 'top bottom', end: 'bottom bottom', scrub: true } });
       const hello = new SplitText('.hello', { type: 'chars' });
@@ -718,15 +696,9 @@ export default function App() {
                 </li>
               ))}
               <li>
-                <a href="#archive">
-                  <span>Archive</span>
-                  <span className="num" aria-hidden="true">IV</span>
-                </a>
-              </li>
-              <li>
                 <a href="#contact">
                   <span>Contact</span>
-                  <span className="num" aria-hidden="true">V</span>
+                  <span className="num" aria-hidden="true">IV</span>
                 </a>
               </li>
             </ol>
