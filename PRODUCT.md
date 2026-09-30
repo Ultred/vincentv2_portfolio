@@ -35,7 +35,7 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 - Home has three sections: hero, work, contact, with a slim archive strip (the v1 projects) separating work and contact, plus a /blog page marked "still writing". No About/profile section, no coffee or R&B branding, no custom cursor.
 - Hero: a 3D marble bust over the fresco; the draggable name card is a lens that reveals the neon "AI view" of whatever is under it (neon is allowed only inside that lens). Screenshots under the lens show true color.
 - Music: one track (Hideaway) on repeat with a single play/pause. At the owner's request it tries to start on page load; most browsers hold it until the first click, and then it starts.
-- Icon: a really simple V. Pictorial marks were rejected as cartoonish.
+- Icon (owner's pick, 2026-09-30, replacing the simple V): "Split Scan", the site's own 3D bust rendered half marble, half neon AI hologram, split by a white hairline through the nose. The tab icon is a tighter crop on the face. Cartoon and pictogram marks stay rejected.
 - Highlight the human + AI blend in plain words: "AI speed, human touch." and "Built fast with AI, finished by hand, with love." (user wording, 2026-09-30).
 
 ## Evidence on Hand
