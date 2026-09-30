@@ -5,23 +5,23 @@ primary_target: "src/App.jsx"
 related_targets: ["index.html"]
 ---
 
-Scope: home page (single-page portfolio), visitor mode Experience.
+Scope: home page (hero, work, contact) plus /blog placeholder; visitor mode Experience.
 Audience: recruiters and freelance clients from a link. Job: judge taste in seconds, open a live project, reach contact.
-Proof: Extractune, Lewis Crawl (mobile app soon), Link. Positioning: human + AI, said as "Every det(ai)l, by hand."
-Constraints: three sections (hero, work, contact); black, white, gray leaning white; no custom cursor, no About/profile, no coffee/R&B. Email is a placeholder.
-Direction: user-pinned Renaissance Edition style (Shopify Editions Winter '26, Awwwards SOTD) in grayscale, with Obys Grids index discipline for Work. Replaces After Hours. Concept roll ran (e67835c3); the pin beats it.
-Memorable moment: the thin white frame inks itself in, then Michelangelo's two hands surface out of black with the name card sitting in the gap between them.
+Proof: Extractune, Lewis Crawl (demo clips, mobile app soon), Link. Positioning: "AI speed, human touch."
+Constraints: black, white, gray outside the lens; neon only inside the lens; no custom cursor, no About/profile, no CV; nothing moves on a timer; music starts only after a gesture.
+Direction: user-pinned Renaissance Edition style (Shopify Editions Winter '26) in grayscale, Obys Grids index discipline for Work. Concept roll ran (e67835c3); the pin beats it.
+Memorable moment: dragging the name card over the page reveals its neon AI twin, aligned to the pixel: the marble bust becomes a wireframe face scan, the fresco becomes neon line work, Adam gets censored.
 
 ## Direction contract
 
-THESIS: A portfolio staged like an art edition: a classical painting is the whole stage and modern type is set over it in a thin frame. Refuses the dev-portfolio hero, skill chips and card grid.
+THESIS: A portfolio staged like an art edition, with a second reading underneath: the page as people see it, and a draggable lens showing it as a machine sees it. Refuses the dev-portfolio hero, skill chips and card grid.
 
-OWN-WORLD: Grayscale oil and fresco, ink #0b0b0b, paper #f4f3f0, stone #dcdbd6, mid #6f6d68, white type over paintings. Host Grotesk semibold at tight tracking for names and titles; Bodoni Moda for serif lines, Roman numerals and the italic "ai". 1px white frame on paintings, 1px ink frame on paper. White and ink pills as the only buttons.
+OWN-WORLD: Grayscale fresco and marble, ink #0b0b0b, paper #f4f3f0, stone #dcdbd6, mid #6f6d68. Host Grotesk semibold tight for names and titles; Bodoni Moda for serif lines, Roman numerals, the italic "AI". 1px white frames on dark, 1px ink frames on paper, white and ink pills. Inside the lens only: neon blue #2b4bff, pink #ff2bd6, cyan #3df5ff, wireframe type, detection boxes with mono labels, true-colour screenshots.
 
-STORY: Visitor sees the name in the gap of the Creation of Adam, reads "Web developer. Every detail, by hand.", scans the four-line index, opens a live project from Work, and emails from the Hello page.
+STORY: Visitor meets the bust and the name card, reads "Full stack developer. AI speed, human touch.", drags the card and sees the AI view, picks a project in Work and opens it live, then emails from the Hello page.
 
-FIRST VIEWPORT: Full-bleed grayscale Creation of Adam, darkened slightly. Centered 300px frame card between the hands holding name (34px grotesk), serif two-liner, and index Extractune I, Lewis Crawl II, Link III, Contact IV. Nav: name + "Portfolio '26" left, Work/Contact center, white "Say hello" pill right. Foot: place left, Manila time right. On phones the card sits under the hands.
+FIRST VIEWPORT: Full-bleed three.js scene: the Creation of Adam fresco as a painted backdrop, a CC0 marble bust on a stone pedestal right of centre, camera drifting with the pointer. Name card (300px, thin white frame) at the left third holding drag hint, name, soundwave player, role line and I-IV index. Nav: name + "Portfolio '26" left, Work/Blog/Contact centre, white "Say hello" pill right. On scroll the card docks as a slim see-through player bar.
 
-FORM: Art-edition landing (Renaissance Edition) translated to grayscale, user-pinned; seed key e67835c3.
+FORM: Art-edition landing (Renaissance Edition) with an AI lens, user-pinned; seed key e67835c3.
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

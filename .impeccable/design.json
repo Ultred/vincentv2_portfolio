@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-30T00:00:00Z",
+  "title": "Design System: Vincent Vinuya, Portfolio '26",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "primary", "displayName": "Gallery Ink", "canonical": "#0b0b0b", "tonalRamp": ["oklch(15% 0.003 90)", "oklch(25% 0.003 90)", "oklch(36% 0.003 90)", "oklch(47% 0.003 90)", "oklch(58% 0.003 90)", "oklch(70% 0.003 90)", "oklch(83% 0.003 90)", "oklch(95% 0.003 90)"] },
+      "paper": { "role": "neutral", "displayName": "Edition Paper", "canonical": "#f4f3f0", "tonalRamp": ["oklch(15% 0.004 90)", "oklch(26% 0.004 90)", "oklch(38% 0.004 90)", "oklch(50% 0.004 90)", "oklch(62% 0.004 90)", "oklch(74% 0.004 90)", "oklch(86% 0.004 90)", "oklch(96.5% 0.004 90)"] },
+      "stone": { "role": "neutral", "displayName": "Pedestal Stone", "canonical": "#dcdbd6", "tonalRamp": ["oklch(15% 0.006 95)", "oklch(26% 0.006 95)", "oklch(38% 0.006 95)", "oklch(50% 0.006 95)", "oklch(62% 0.006 95)", "oklch(74% 0.006 95)", "oklch(88.5% 0.006 95)", "oklch(95% 0.006 95)"] },
+      "mid": { "role": "neutral", "displayName": "Plaster Mid", "canonical": "#6f6d68", "tonalRamp": ["oklch(15% 0.007 85)", "oklch(26% 0.007 85)", "oklch(38% 0.007 85)", "oklch(52% 0.007 85)", "oklch(64% 0.007 85)", "oklch(76% 0.007 85)", "oklch(86% 0.007 85)", "oklch(95% 0.007 85)"] },
+      "white": { "role": "neutral", "displayName": "Frame White", "canonical": "#ffffff", "tonalRamp": ["oklch(15% 0 0)", "oklch(27% 0 0)", "oklch(39% 0 0)", "oklch(51% 0 0)", "oklch(63% 0 0)", "oklch(75% 0 0)", "oklch(87% 0 0)", "oklch(100% 0 0)"] },
+      "rule": { "role": "neutral", "displayName": "Hairline Rule", "canonical": "rgb(11 11 11 / 0.16)" },
+      "neon-blue": { "role": "tertiary", "displayName": "Scan Blue", "canonical": "#2b4bff", "tonalRamp": ["oklch(15% 0.1 266)", "oklch(27% 0.18 266)", "oklch(39% 0.24 266)", "oklch(50% 0.27 266)", "oklch(62% 0.21 266)", "oklch(74% 0.14 266)", "oklch(85% 0.08 266)", "oklch(95% 0.03 266)"] },
+      "neon-pink": { "role": "tertiary", "displayName": "Detection Pink", "canonical": "#ff2bd6", "tonalRamp": ["oklch(15% 0.08 336)", "oklch(27% 0.14 336)", "oklch(40% 0.2 336)", "oklch(53% 0.26 336)", "oklch(66% 0.3 336)", "oklch(76% 0.2 336)", "oklch(86% 0.11 336)", "oklch(95% 0.04 336)"] },
+      "neon-cyan": { "role": "tertiary", "displayName": "Wireframe Cyan", "canonical": "#3df5ff", "tonalRamp": ["oklch(15% 0.04 200)", "oklch(27% 0.06 200)", "oklch(39% 0.08 200)", "oklch(51% 0.1 200)", "oklch(63% 0.12 200)", "oklch(75% 0.13 200)", "oklch(89% 0.15 200)", "oklch(95% 0.07 200)"] },
+      "ai-void": { "role": "tertiary", "displayName": "Machine Void", "canonical": "#05040a", "tonalRamp": ["oklch(12% 0.015 290)", "oklch(24% 0.015 290)", "oklch(36% 0.015 290)", "oklch(48% 0.015 290)", "oklch(60% 0.015 290)", "oklch(72% 0.015 290)", "oklch(84% 0.015 290)", "oklch(95% 0.015 290)"] },
+      "ai-ink": { "role": "tertiary", "displayName": "Readout White", "canonical": "#e9f6ff", "tonalRamp": ["oklch(15% 0.02 235)", "oklch(27% 0.02 235)", "oklch(39% 0.02 235)", "oklch(51% 0.02 235)", "oklch(63% 0.02 235)", "oklch(75% 0.02 235)", "oklch(87% 0.02 235)", "oklch(97% 0.02 235)"] },
+      "ai-muted": { "role": "tertiary", "displayName": "Readout Lilac", "canonical": "#b9c7ff", "tonalRamp": ["oklch(15% 0.05 275)", "oklch(27% 0.07 275)", "oklch(39% 0.08 275)", "oklch(51% 0.08 275)", "oklch(63% 0.08 275)", "oklch(75% 0.08 275)", "oklch(83% 0.08 275)", "oklch(95% 0.03 275)"] }
+    },
+    "typographyMeta": {
+      "display-serif": { "displayName": "Display Serif", "purpose": "The one giant word of a dark page: \"Hello.\" and \"Blog\"." },
+      "display": { "displayName": "Display", "purpose": "The \"Work\" section title, split into masked characters on entry." },
+      "headline": { "displayName": "Headline", "purpose": "Project names in work rows." },
+      "title": { "displayName": "Title", "purpose": "The name on the card, the page's h1." },
+      "serif-line": { "displayName": "Serif Line", "purpose": "One-sentence project lines, the card role line, contact and blog lines." },
+      "body": { "displayName": "Body", "purpose": "Base text; nav links at 500." },
+      "label": { "displayName": "Label", "purpose": "Visit links, pills, row meta and captions." },
+      "numeral": { "displayName": "Numeral", "purpose": "Bodoni Roman numerals for rows, counts, card index and shot ticks." },
+      "label-mono": { "displayName": "Label Mono", "purpose": "AI-layer detection-box labels and the censor tag only." }
+    },
+    "shadows": [
+      { "name": "legibility-halo", "value": "text-shadow: 0 1px 10px rgb(0 0 0 / 0.75)", "purpose": "White card text over any ground the card is dragged onto." },
+      { "name": "wireframe-glow", "value": "text-shadow: 0 0 18px rgb(61 245 255 / 0.45)", "purpose": "Stroked cyan type in the AI layer." },
+      { "name": "lens-ring", "value": "inset 0 0 0 1px #3df5ff, 0 0 16px rgb(61 245 255 / 0.4)", "purpose": "The pill in the AI layer." },
+      { "name": "drag-glow", "value": "0 0 10px #ff2bd6, 0 0 22px rgb(61 245 255 / 0.6)", "purpose": "Card frame lines while dragging." },
+      { "name": "censor-glow", "value": "0 0 14px rgb(255 43 214 / 0.7)", "purpose": "The censor tag." }
+    ],
+    "motion": [
+      { "name": "ease", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Default CSS easing (expo out); GSAP uses expo.out and expo.inOut." },
+      { "name": "hover-intent", "value": "320ms", "purpose": "Mouse hover on a work row selects only after resting this long; click and focus select instantly." },
+      { "name": "underline-draw", "value": "background-size 0.6s var(--ease)", "purpose": "1px underline drawing in on nav, contact and visit links." },
+      { "name": "intro-frame-draw", "value": "scale 0 to 1, 0.7s power3.inOut, stagger 0.18s", "purpose": "The card's four frame lines ink themselves in around the card, then the painting and bust surface; repeat visits in a session run at 0.45x duration." },
+      { "name": "card-fold", "value": "grid-template-rows 0.7s var(--ease)", "purpose": "The card's collapsible block folds when docking." },
+      { "name": "card-move", "value": "1s expo.inOut", "purpose": "The card travelling between home and dock spot." },
+      { "name": "media-wipe", "value": "clip-path 0.9s var(--ease)", "purpose": "Preview shots wiping in from the top." },
+      { "name": "drag-threshold", "value": "5px", "purpose": "Pointer travel before a press becomes a card drag." },
+      { "name": "keyboard-step", "value": "20px / 60px with Shift", "purpose": "Arrow-key card movement from the grip button." },
+      { "name": "reduced-motion", "value": "prefers-reduced-motion: reduce", "purpose": "No Lenis or GSAP intros, CSS transitions off, card placed without tween, shader time frozen, no pointer drift, videos paused by default." }
+    ],
+    "breakpoints": [
+      { "name": "narrow", "value": "820px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Pill",
+      "kind": "button",
+      "refersTo": "pill",
+      "description": "The white CTA pill (mailto, back link); inverts to ink on hover.",
+      "html": "<a class=\"ds-pill\" href=\"#\">hello@example.com <svg class=\"ds-arrow\" viewBox=\"0 0 12 12\" aria-hidden=\"true\"><path d=\"M2.5 9.5 9.5 2.5M4 2.5h5.5V8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\"/></svg></a>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: #ffffff; color: #0b0b0b; font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; font-weight: 600; font-size: 14px; text-decoration: none; transition: background-color 0.4s, color 0.4s; } .ds-pill:hover { background: #0b0b0b; color: #ffffff; } .ds-pill:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; } .ds-arrow { width: 0.75em; height: 0.75em; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); } .ds-pill:hover .ds-arrow { transform: translate(2px, -2px); }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-pill",
+      "description": "Fixed transparent three-column nav; white over dark, ink over paper.",
+      "html": "<header class=\"ds-nav\"><a class=\"ds-nav-name\" href=\"#\">Vincent Vinuya <span>Portfolio ’26</span></a><nav class=\"ds-nav-links\"><a href=\"#\">Work</a><a href=\"#\">Blog</a><a href=\"#\">Contact</a></nav><a class=\"ds-nav-pill\" href=\"#\">Say hello</a></header>",
+      "css": ".ds-nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 16px 32px; background: #0b0b0b; color: #ffffff; font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; font-size: 15px; } .ds-nav a { color: inherit; text-decoration: none; } .ds-nav-name { font-weight: 600; letter-spacing: -0.02em; } .ds-nav-name span { margin-left: 6px; font-weight: 400; } .ds-nav-links { display: flex; gap: 28px; font-weight: 500; } .ds-nav-links a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.6s cubic-bezier(0.16, 1, 0.3, 1); } .ds-nav-links a:hover { background-size: 100% 1px; } .ds-nav a:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; } .ds-nav-pill { justify-self: end; padding: 7px 14px; border-radius: 999px; background: #ffffff; color: #0b0b0b !important; font-weight: 600; font-size: 14px; }"
+    },
+    {
+      "name": "Lens Card",
+      "kind": "custom",
+      "refersTo": "lens-card",
+      "description": "The draggable name card: hairline frame, scanlines, grip hint, name and player; frame glows neon while dragging.",
+      "html": "<div class=\"ds-stage\"><aside class=\"ds-card\" tabindex=\"0\"><p class=\"ds-card-hint\"><svg viewBox=\"0 0 10 14\" width=\"8\" height=\"12\" aria-hidden=\"true\"><circle cx=\"3\" cy=\"2\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"2\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"3\" cy=\"7\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"7\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"3\" cy=\"12\" r=\"1.1\" fill=\"currentColor\"/><circle cx=\"7\" cy=\"12\" r=\"1.1\" fill=\"currentColor\"/></svg>Drag me · see it as <em>AI</em> does</p><h1 class=\"ds-card-title\">Vincent<br>Vinuya</h1><p class=\"ds-card-line\">Full stack developer.<br><em>AI</em> speed, human touch.</p></aside></div>",
+      "css": ".ds-stage { padding: 40px; background: #3a3a38; } .ds-card { position: relative; width: 300px; padding: 14px 20px 18px; color: #ffffff; background: rgb(0 0 0 / 0.22); outline: 1px solid rgb(255 255 255 / 0.85); text-shadow: 0 1px 10px rgb(0 0 0 / 0.75); cursor: grab; font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; transition: outline-color 0.3s, box-shadow 0.3s; } .ds-card::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgb(0 0 0 / 0.18) 0 1px, transparent 1px 3px); } .ds-card:hover, .ds-card:focus-visible { outline-color: #ff2bd6; box-shadow: 0 0 10px #ff2bd6, 0 0 22px rgb(61 245 255 / 0.6); } .ds-card em { font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; font-style: italic; font-weight: 500; } .ds-card-hint { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; font-size: 11px; opacity: 0.85; } .ds-card-title { margin: 0; font-weight: 650; font-size: 34px; line-height: 0.92; letter-spacing: -0.04em; } .ds-card-line { margin: 24px 0 0; font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; font-size: 15px; line-height: 1.15; } .ds-card-line em { font-weight: 600; }"
+    },
+    {
+      "name": "Soundwave Player",
+      "kind": "custom",
+      "refersTo": "player-button",
+      "description": "Single-track player in the card: bar soundwave, Bodoni italic state line, one round play/pause.",
+      "html": "<div class=\"ds-player\"><svg class=\"ds-wave\" viewBox=\"0 0 84 26\" aria-hidden=\"true\"><g fill=\"#fff\"><rect x=\"1\" y=\"10\" width=\"1.5\" height=\"6\"/><rect x=\"4.2\" y=\"6\" width=\"1.5\" height=\"14\"/><rect x=\"7.4\" y=\"3\" width=\"1.5\" height=\"20\"/><rect x=\"10.6\" y=\"8\" width=\"1.5\" height=\"10\"/><rect x=\"13.8\" y=\"5\" width=\"1.5\" height=\"16\"/><rect x=\"17\" y=\"9\" width=\"1.5\" height=\"8\"/><rect x=\"20.2\" y=\"11\" width=\"1.5\" height=\"4\"/><rect x=\"23.4\" y=\"12\" width=\"1.5\" height=\"2\"/><rect x=\"26.6\" y=\"12\" width=\"1.5\" height=\"2\"/><rect x=\"29.8\" y=\"12\" width=\"1.5\" height=\"2\"/></g></svg><div class=\"ds-player-meta\"><span class=\"ds-player-side\">Now playing</span><span class=\"ds-player-title\">Hideaway</span></div><button type=\"button\" class=\"ds-player-btn\" aria-label=\"Pause Hideaway\"><svg viewBox=\"0 0 12 12\" aria-hidden=\"true\"><path d=\"M3 2h2v8H3zM7 2h2v8H7z\"/></svg></button></div>",
+      "css": ".ds-player { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 260px; padding: 10px 16px; background: #0b0b0b; color: #ffffff; border-top: 1px solid rgb(255 255 255 / 0.28); border-bottom: 1px solid rgb(255 255 255 / 0.28); font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; } .ds-wave { width: 84px; height: 26px; } .ds-player-meta { display: grid; font-size: 11px; line-height: 1.3; } .ds-player-side { font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; font-style: italic; opacity: 0.75; } .ds-player-title { font-weight: 600; } .ds-player-btn { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 1px solid rgb(255 255 255 / 0.6); border-radius: 50%; background: none; color: inherit; cursor: pointer; transition: background-color 0.3s, color 0.3s; } .ds-player-btn svg { width: 10px; height: 10px; fill: currentColor; } .ds-player-btn:hover { background: #ffffff; color: #0b0b0b; } .ds-player-btn:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }"
+    },
+    {
+      "name": "Work Row",
+      "kind": "card",
+      "refersTo": "work-row-title",
+      "description": "A select button (Roman numeral, name, serif line, meta) plus a separate visit link, divided by a hairline rule.",
+      "html": "<div class=\"ds-row\"><button type=\"button\" class=\"ds-row-select\" aria-pressed=\"true\"><span class=\"ds-row-no\">I.</span><span class=\"ds-row-title\">Extractune</span><span class=\"ds-row-line\">Pull the audio, lyrics and song out of any video, on your device.</span><span class=\"ds-row-meta\">Audio tool · Live</span></button><a class=\"ds-row-visit\" href=\"#\">Visit Extractune <svg viewBox=\"0 0 12 12\" width=\"10\" height=\"10\" aria-hidden=\"true\"><path d=\"M2.5 9.5 9.5 2.5M4 2.5h5.5V8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.2\"/></svg></a></div>",
+      "css": ".ds-row { max-width: 640px; background: #f4f3f0; color: #0b0b0b; border-bottom: 1px solid rgb(11 11 11 / 0.16); font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; } .ds-row-select { width: 100%; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; display: grid; grid-template-columns: 3.2rem minmax(0, 1fr); grid-template-areas: 'no title' 'no line' 'no meta'; column-gap: 12px; padding: 18px 0 10px; } .ds-row-select:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; } .ds-row-no { grid-area: no; font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; font-size: 18px; line-height: 2; color: #6f6d68; } .ds-row-title { grid-area: title; font-weight: 650; font-size: 56px; line-height: 0.95; letter-spacing: -0.04em; } .ds-row-line { grid-area: line; margin-top: 10px; max-width: 38ch; font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; font-size: 16px; line-height: 1.25; } .ds-row-meta { grid-area: meta; margin-top: 10px; font-size: 13px; color: #6f6d68; } .ds-row-visit { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 20px calc(3.2rem + 12px); font-size: 13px; font-weight: 600; color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 0.6s cubic-bezier(0.16, 1, 0.3, 1); } .ds-row-visit:hover, .ds-row-visit:focus-visible { background-size: 100% 1px; }"
+    },
+    {
+      "name": "Preview Frame",
+      "kind": "card",
+      "refersTo": "preview-frame",
+      "description": "16:10 stone-matted, ink-bordered frame with grayscale shot, round video toggle, and Roman shot ticks.",
+      "html": "<figure class=\"ds-preview\"><div class=\"ds-frame\"><div class=\"ds-shot\"></div><button type=\"button\" class=\"ds-video-toggle\" aria-label=\"Pause the video\"><svg viewBox=\"0 0 12 12\" aria-hidden=\"true\"><path d=\"M3 2h2v8H3zM7 2h2v8H7z\"/></svg></button></div><figcaption><span class=\"ds-num\">II</span><span>Lewis Crawl — Game</span><span class=\"ds-ticks\"><button type=\"button\" aria-label=\"Previous shot\">‹</button><button type=\"button\" class=\"is-on\" aria-pressed=\"true\">I</button><button type=\"button\" aria-pressed=\"false\">II</button><button type=\"button\" aria-pressed=\"false\">III</button><button type=\"button\" aria-label=\"Next shot\">›</button></span></figcaption></figure>",
+      "css": ".ds-preview { margin: 0; width: 480px; background: #f4f3f0; padding: 16px; font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; } .ds-frame { position: relative; aspect-ratio: 16 / 10; border: 1px solid #0b0b0b; padding: 10px; background: #dcdbd6; } .ds-shot { width: 100%; height: 100%; background: linear-gradient(135deg, #2a2a2a, #8a8a8a); filter: grayscale(1) contrast(1.05); } .ds-video-toggle { position: absolute; right: 20px; bottom: 20px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 50%; background: #0b0b0b; color: #ffffff; cursor: pointer; } .ds-video-toggle svg { width: 11px; height: 11px; fill: currentColor; } .ds-video-toggle:focus-visible { outline: 1px solid #0b0b0b; outline-offset: 4px; } .ds-preview figcaption { display: flex; gap: 12px; margin-top: 10px; font-size: 13px; color: #6f6d68; } .ds-num { font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; color: #0b0b0b; } .ds-ticks { display: flex; gap: 6px; margin-left: auto; font-family: 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif; } .ds-ticks button { padding: 2px 3px; border: 0; background: none; color: inherit; font: inherit; opacity: 0.35; cursor: pointer; transition: opacity 0.4s; } .ds-ticks button:hover { opacity: 0.7; } .ds-ticks button:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; } .ds-ticks .is-on { opacity: 1; color: #0b0b0b; }"
+    },
+    {
+      "name": "Detection Label",
+      "kind": "chip",
+      "refersTo": "detection-label",
+      "description": "AI-layer only: a 1px pink detection box with a mono classifier chip, over cyan stroked type on the machine void.",
+      "html": "<div class=\"ds-ai\"><h2 class=\"ds-ai-title\" data-ai=\"heading · 0.99\">Work</h2></div>",
+      "css": ".ds-ai { padding: 48px 32px 24px; background-color: #05040a; background-image: linear-gradient(rgb(43 75 255 / 0.22) 1px, transparent 1px), linear-gradient(90deg, rgb(43 75 255 / 0.22) 1px, transparent 1px); background-size: 40px 40px; } .ds-ai-title { position: relative; display: inline-block; margin: 0; font-family: 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif; font-weight: 650; font-size: 96px; line-height: 0.8; letter-spacing: -0.04em; color: transparent; -webkit-text-stroke: 1px #3df5ff; text-shadow: 0 0 18px rgb(61 245 255 / 0.45); outline: 1px solid #ff2bd6; outline-offset: 3px; } .ds-ai-title::after { content: attr(data-ai); position: absolute; left: -4px; top: -22px; padding: 1px 5px; background: #ff2bd6; color: #05040a; font: 600 10px/1.4 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.02em; white-space: nowrap; -webkit-text-stroke: 0; text-shadow: none; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Edition and Its Scan",
+    "overview": "The site is printed twice. The human layer is a grayscale art edition: classical paintings and a marble bust in black, white and gray, with tight modern grotesk names laid over them and Bodoni carrying the voice. Underneath, aligned to the pixel, sits the AI layer: the same DOM and the same 3D camera, redrawn the way a model would read it, in neon on near-black. The draggable name card is the only window onto that second layer. Everything the visitor sees outside the card stays monochrome; everything inside it is the machine's reading.\n\nDensity is low and editorial. Each section holds one idea at poster scale (the bust, the word \"Work\", the word \"Hello.\") and a few words of copy. Frames are 1px hairlines, corners are square, and the only rounded things are pills and round media controls. Depth comes from the three.js scene and painting scrims, never from drop shadows on paper. Motion is heavy but always answers the visitor: pointer drift, scroll, drag, hover with intent, a first gesture for sound.",
+    "keyCharacteristics": [
+      "Two layers, one layout: a monochrome human layer and a neon AI twin clipped to the card every frame.",
+      "Twin three.js render from one camera: marble bust and grayscale fresco for people; hologram bust, pink edge-traced plinth, neon Sobel-traced fresco and a scrolling floor grid for the machine, drawn with a scissor inside the card rectangle.",
+      "Host Grotesk semibold, tight tracking, for names and titles; Bodoni Moda for lines, Roman numerals and the italic \"AI\".",
+      "1px frames: white on dark, ink on paper. White and ink pills are the only filled controls.",
+      "Work screenshots are grayscale for people and true colour under the lens.",
+      "Nothing advances on a timer; reduced motion gets a complete, still page."
+    ],
+    "rules": [
+      { "name": "The Two Layers Rule", "body": "Neon (blue, pink, cyan) and the machine void appear only inside the card lens: in the `.ai-layer` twin, the machine scene, the card's own frame while dragging, and the censor tag that only shows when the lens covers it. The human layer never uses a hue.", "section": "colors" },
+      { "name": "The True Colour Rule", "body": "Project screenshots and video are grayscale (`grayscale(1) contrast(1.05)`) in the human layer, a little harder on intent (`contrast(1.18)`), and in full colour only under the lens. Colour is what the machine sees.", "section": "colors" },
+      { "name": "The Grotesk Names, Bodoni Speaks Rule", "body": "Names, titles and controls are Host Grotesk at 600-650 with -0.02em to -0.04em tracking. Sentences, numerals and the word \"AI\" are Bodoni. Every `em` is Bodoni italic 500 (600 on the card line); hovering a card-index entry swaps its name to Bodoni italic.", "section": "typography" },
+      { "name": "The Roman Index Rule", "body": "Every count and index is a Bodoni Roman numeral (I, II, III, IV): row numbers, the work count, card-index numbers, shot ticks. No Arabic step numbers.", "section": "typography" },
+      { "name": "The Mono Is Machine Rule", "body": "Monospace exists only as the AI layer's detection labels and censor tag. It never appears in the human layer.", "section": "typography" },
+      { "name": "The Glow Is Machine Rule", "body": "Light-emitting shadow belongs to the AI layer and the lens. The human layer gets depth from the 3D scene and scrims only; its single shadow is the legibility halo on card text.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep every hue inside the lens; the human layer is ink, paper, stone, mid and white only.",
+      "Do build any new section twice, as a human section and its AI restyle in the same layout, so the lens stays pixel-aligned.",
+      "Do tag AI-layer elements with `data-ai` detection labels written as classifier output (noun · confidence), in mono on pink.",
+      "Do set names and titles in Host Grotesk 600-650 with -0.02em to -0.04em tracking, and sentences, numerals and \"AI\" in Bodoni Moda.",
+      "Do number with Bodoni Roman numerals.",
+      "Do frame with 1px lines: white on dark, ink on paper; square corners except pills and round media buttons.",
+      "Do show screenshots grayscale outside the lens and true colour under it.",
+      "Do ease with `cubic-bezier(0.16, 1, 0.3, 1)` (expo out) for CSS and `expo.out` / `expo.inOut` in GSAP.",
+      "Do make every motion answer input: pointer drift, scroll scrub, drag, 320ms hover intent, a first gesture for music, an explicit toggle for video.",
+      "Do give reduced motion a complete still page: no smooth scroll or intros, CSS transitions off, the card placed without tweening, shader time frozen, no pointer drift, videos paused by default.",
+      "Do keep the 3D scene a lazy chunk with the static painting shown until it mounts, the renderer pixel ratio capped at 1.5, images lazy, video `preload=\"none\"`, and the scene rendered only while the hero is on screen.",
+      "Do keep every control keyboard reachable with the 1px currentColor focus outline at 4px offset, and label outbound links \"(opens in a new tab)\" for screen readers."
+    ],
+    "donts": [
+      "Don't advance content on a timer: no carousels, autoplaying slides, or timed reveals. The only timers are hover intent, the minute clock, and dock fallbacks.",
+      "Don't start sound or video without a visitor action.",
+      "Don't add box shadows, blur panels or glow to the human layer; glow is the machine's.",
+      "Don't use monospace outside the AI layer.",
+      "Don't add a custom cursor, skill chips, a card grid, an About/profile section or a CV.",
+      "Don't put small labels above headlines; the giant word stands alone."
+    ]
+  }
+}

@@ -34,7 +34,7 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 - User-pinned look (2026-09-30, replaces the dark After Hours version): black, white and gray only, leaning white; editorial "Renaissance Edition" style with classical paintings in grayscale and modern type over them. References: shopify.com/editions/winter2026, grids03.obys.agency, sobha-privy-collection.com.
 - Home has three sections: hero, work, contact, plus a /blog page marked "still writing". No About/profile section, no coffee or R&B branding, no custom cursor.
 - Hero: a 3D marble bust over the fresco; the draggable name card is a lens that reveals the neon "AI view" of whatever is under it (neon is allowed only inside that lens). Screenshots under the lens show true color.
-- Music: one track (Hideaway) on repeat with a single play/pause; it starts on the first click because browsers block autoplay.
+- Music: one track (Hideaway) on repeat with a single play/pause. At the owner's request it tries to start on page load; most browsers hold it until the first click, and then it starts.
 - Icon: a really simple V. Pictorial marks were rejected as cartoonish.
 - Highlight the human + AI blend in plain words: "AI speed, human touch." and "Built fast with AI, finished by hand, with love." (user wording, 2026-09-30).
 
