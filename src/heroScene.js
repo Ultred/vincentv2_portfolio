@@ -136,7 +136,7 @@ function plinthParts() {
   ];
 }
 
-export function createHeroScene(canvas, { reduced, onReady, art }) {
+export function createHeroScene(canvas, { reduced, onReady, onProgress, art }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 820 ? 1.25 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -346,6 +346,7 @@ export function createHeroScene(canvas, { reduced, onReady, art }) {
       // measure on the model's own frame, before the stage moves it
       const probeModel = src.clone(true);
       findMouth(probeModel);
+      onProgress?.(0.6);
       warmUp(src);
     },
     undefined,
@@ -370,6 +371,7 @@ export function createHeroScene(canvas, { reduced, onReady, art }) {
       ? Promise.all(scenes.map((sc) => renderer.compileAsync(sc, camera)))
       : Promise.resolve(scenes.forEach((sc) => renderer.compile(sc, camera)));
     compiled
+      .then(() => onProgress?.(0.9))
       .then(upload)
       .catch(() => {})
       .finally(() => onReady?.());

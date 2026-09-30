@@ -10,3 +10,7 @@ import Blog from './Blog.jsx';
 const isBlog = window.location.pathname.replace(/\/+$/, '') === '/blog';
 
 createRoot(document.getElementById('root')).render(<StrictMode>{isBlog ? <Blog /> : <App />}</StrictMode>);
+
+// the blog has no 3D to wait for; the home page lifts the loader when its intro begins
+if (isBlog) window.__loader?.done();
+else window.__loader?.set(0.2);
