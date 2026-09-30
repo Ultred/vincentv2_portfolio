@@ -946,11 +946,11 @@ em {
 /* phones and small tablets */
 @media (max-width: 820px) {
   /* the docked bar sits over the last ~130px, so the page ends above it */
-  .human .contact {
+  .contact {
     padding-bottom: 150px;
   }
 
-  .human .foot {
+  .foot {
     bottom: 136px;
   }
 
