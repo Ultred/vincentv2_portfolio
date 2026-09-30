@@ -323,7 +323,19 @@ export default function App() {
     const place = (p, animate) => {
       pos.x = p.x;
       pos.y = p.y;
-      if (animate && !reduced) gsap.to(lens, { x: p.x, y: p.y, duration: 1, ease: 'expo.inOut' });
+      if (animate && !reduced)
+        gsap.to(lens, {
+          x: p.x,
+          y: p.y,
+          duration: 1,
+          ease: 'expo.inOut',
+          // if the card changed size on the way, settle on the right spot
+          onComplete: () => {
+            if (moved) return;
+            const t = isDocked ? dockSpot() : home();
+            if (Math.abs(t.x - pos.x) > 2 || Math.abs(t.y - pos.y) > 2) place(t, true);
+          },
+        });
       else gsap.set(lens, { x: p.x, y: p.y });
     };
     const clampToView = () => {
@@ -344,7 +356,9 @@ export default function App() {
       if (moved) return;
       const more = lens.querySelector('.card-more');
       let done = false;
-      const go = () => {
+      const go = (e) => {
+        // other transitions inside the card bubble up too; only the height change counts
+        if (e && (e.target !== more || e.propertyName !== 'grid-template-rows')) return;
         if (done) return;
         done = true;
         more.removeEventListener('transitionend', go);
@@ -358,6 +372,8 @@ export default function App() {
       start: 'top top',
       end: '55% top',
       onLeave: () => setDock(true),
+      // a jump past the hero (a #work link, a reload mid-page) never "leaves" it, so check on refresh too
+      onRefresh: (self) => self.progress >= 1 && setDock(true),
       onEnterBack: () => {
         lens.classList.remove('is-scanning');
         setDock(false);
@@ -421,7 +437,10 @@ export default function App() {
     const closeView = () => {
       moved = false;
       lens.classList.remove('is-scanning', 'is-moved');
-      requestAnimationFrame(() => place(isDocked ? dockSpot() : home(), true));
+      // past the hero the card belongs in the docked bar, even if it was taken while undocked
+      const pastHero = dockTrigger.progress >= 1;
+      if (pastHero && !isDocked) setDock(true);
+      else requestAnimationFrame(() => place(isDocked ? dockSpot() : home(), true));
     };
     const closeBtn = lens.querySelector('.card-close');
     closeBtn.addEventListener('click', closeView);
@@ -593,14 +612,14 @@ export default function App() {
                 <li key={w.title}>
                   <a href="#work" onClick={() => setActive(i)}>
                     <span>{w.title}</span>
-                    <span className="num">{w.no}</span>
+                    <span className="num" aria-hidden="true">{w.no}</span>
                   </a>
                 </li>
               ))}
               <li>
                 <a href="#contact">
                   <span>Contact</span>
-                  <span className="num">IV</span>
+                  <span className="num" aria-hidden="true">IV</span>
                 </a>
               </li>
             </ol>
