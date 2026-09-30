@@ -241,11 +241,9 @@ export function createHeroScene(canvas, { reduced, onReady }) {
     return { d: new THREE.Vector3(Math.cos(a) * rr, z, Math.sin(a) * rr), v: 0.9 + ((i * 37) % 11) / 11, spin: new THREE.Euler(i, i * 1.7, i * 0.6) };
   });
   const shredM = new THREE.Matrix4(), shredQ = new THREE.Quaternion(), shredP = new THREE.Vector3(), shredS = new THREE.Vector3(), shredE = new THREE.Euler();
-  // what is left on the lips after the pop
-  const leftover = new THREE.Mesh(bubbleGeo, bubbleMat);
-  pop.renderOrder = shreds.renderOrder = leftover.renderOrder = 10;
-  bubble.visible = pop.visible = shreds.visible = leftover.visible = false;
-  machineStage.add(bubble, pop, shreds, leftover);
+  pop.renderOrder = shreds.renderOrder = 10;
+  bubble.visible = pop.visible = shreds.visible = false;
+  machineStage.add(bubble, pop, shreds);
   const mouth = { at: new THREE.Vector3(), out: new THREE.Vector3(0, 0, 1), ready: false };
   const BUBBLE_R = 0.16;
   // grows while the lens is over the face, strains, pops, and starts again
@@ -276,20 +274,34 @@ export function createHeroScene(canvas, { reduced, onReady }) {
       }
     }
     if (!nose) return;
-    // refine the facing angle at the nose height, then follow it down
+    // follow that line down the face. Below the nose tip the profile dips (under the nose), rises
+    // (upper lip), and dips again: that second dip is the line between the lips, where the gum comes out
     const line = [];
-    for (let y = nose.y - 0.02; y >= nose.y - 0.34; y -= 0.004) {
+    for (let y = nose.y + 0.08; y >= nose.y - 0.34; y -= 0.004) {
       const h = reach(y, nose.a);
       if (h) line.push(h);
     }
-    const chinZone = line.filter((h) => h.y < nose.y - 0.1);
-    if (!chinZone.length) return;
-    const chin = chinZone.reduce((m, h) => (h.r > m.r ? h : m));
-    const lips = reach(nose.y - (nose.y - chin.y) * 0.62, nose.a) ?? chin;
+    if (line.length < 10) return;
+    const tipAt = line.reduce((best, h, i) => (h.r > line[best].r ? i : best), 0);
+    const dips = [];
+    for (let i = tipAt + 1; i < line.length - 1; i++) {
+      const rest = line.slice(i + 1, i + 9).map((h) => h.r);
+      if (line[i].r <= line[i - 1].r && line[i].r < line[i + 1].r && Math.max(...rest) - line[i].r > 0.004) dips.push(line[i]);
+    }
+    // dips closer than 3cm are one feature (the underside of the nose is a little ragged); keep the deepest
+    const features = [];
+    for (const dip of dips) {
+      const last = features[features.length - 1];
+      if (last && last.y - dip.y < 0.03) {
+        if (dip.r < last.r) features[features.length - 1] = dip;
+      } else features.push(dip);
+    }
+    const lips = features[1] ?? features[0];
+    if (!lips) return;
     mouth.at.copy(lips.p);
-    mouth.out.set(Math.sin(nose.a), -0.35, Math.cos(nose.a)).normalize();
+    mouth.out.set(Math.sin(nose.a), -0.12, Math.cos(nose.a)).normalize();
     mouth.ready = true;
-    state.face = { nose: [nose.y.toFixed(3), ((nose.a * 180) / Math.PI).toFixed(1), nose.r.toFixed(3)], chin: [chin.y.toFixed(3), chin.r.toFixed(3)], lips: lips.p.toArray().map((v) => v.toFixed(3)), box: [box.min.toArray(), box.max.toArray()].map((v) => v.map((n) => n.toFixed(2))) };
+    state.face = { tip: line[tipAt].y.toFixed(3), dips: features.map((h) => h.y.toFixed(3)), lips: lips.y.toFixed(3) };
   }
 
 
@@ -416,7 +428,7 @@ export function createHeroScene(canvas, { reduced, onReady }) {
       bubble.scale.set(rad * wobble, rad / wobble, rad * wobble);
       bubble.position.copy(mouth.at).addScaledVector(mouth.out, rad * 0.8);
 
-      // the pop: a flash ring, shreds that fly and fall, and a bit of gum left on the lips
+      // the pop: a flash ring and shreds that fly and fall
       const since = t - blow.popT;
       const popping = !reduced && blow.popT > 0;
       pop.visible = popping && since < 0.3;
@@ -441,13 +453,6 @@ export function createHeroScene(canvas, { reduced, onReady }) {
         }
         shreds.instanceMatrix.needsUpdate = true;
         shredMat.opacity = 1 - k * k;
-      }
-      leftover.visible = popping && since < 1.2;
-      if (leftover.visible) {
-        const k = since / 1.2;
-        const lr = BUBBLE_R * 0.28 * (1 - k * k);
-        leftover.scale.set(lr * 1.4, lr * 0.6, lr);
-        leftover.position.copy(mouth.at).addScaledVector(mouth.out, lr * 0.4);
       }
     }
 

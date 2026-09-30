@@ -260,7 +260,7 @@ A second, inert render of the same sections (`aria-hidden`, `inert`, all control
 
 ### AI-View Easter Eggs
 Jokes that exist only under the lens, in the machine's voice (mono pink chips, detection boxes):
-- **Bubble gum:** the hologram bust blows a pink gum bubble while the lens covers its lips. The mouth is found on the model itself (nose tip and chin along the face line, lips between). The bubble grows in real time (not per frame), quivers as it nears bursting, then pops: a flash ring, 26 gum shreds that spin out and fall, and a bit of gum left on the lips. With reduced motion it holds still at full size.
+- **Bubble gum:** the hologram bust blows a pink gum bubble while the lens covers its lips. The mouth is found on the model itself (nose tip and chin along the face line, lips between). The bubble grows in real time (not per frame), quivers as it nears bursting, then pops: a flash ring and 26 gum shreds that spin out and fall, leaving the lips clean. With reduced motion it holds still at full size.
 - **The spark:** a white-hot point between God's and Adam's fingertips on the neon fresco, with a pink halo, cyan anamorphic streaks and a slow pulse. Its chip reads "handshake · 200 OK". On phones the fresco sits a little right (x 1.65 instead of 0.4) so the spark stays reachable.
 - **God:** "admin · sudo access" (desktop; off screen on phones).
 - **Adam:** the existing "AI safe search: on" censor (desktop).
