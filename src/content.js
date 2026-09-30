@@ -20,7 +20,11 @@ export const work = [
     status: 'Live',
     href: 'https://www.extractune.com/',
     image: '/work/extractune.webp',
-    shots: [{ src: '/work/extractune.webp' }, { src: '/work/extractune-2.webp' }, { src: '/work/extractune-studio.webp' }],
+    shots: [
+      { video: '/work/extractune-tour.webm', src: '/work/extractune.webp' },
+      { src: '/work/extractune-studio.webp' },
+      { src: '/work/extractune-2.webp' },
+    ],
   },
   {
     no: 'II',
