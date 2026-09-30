@@ -106,7 +106,7 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
                 <span className="row-shots">
                   {w.shots.map((sh) =>
                     sh.video ? (
-                      <video key={sh.src} className="row-shot is-contain" src={sh.video} poster={sh.src} muted loop playsInline preload="none" controls={!ai} />
+                      <video key={sh.src} className={`row-shot ${sh.fit === 'contain' ? 'is-contain' : ''}`} src={sh.video} poster={sh.src} muted loop playsInline preload="none" aria-hidden="true" />
                     ) : (
                       <img key={sh.src} className={`row-shot ${sh.fit === 'contain' ? 'is-contain' : ''}`} src={sh.src} alt="" loading="lazy" decoding="async" {...tag('screenshot')} />
                     )
@@ -230,6 +230,39 @@ export default function App() {
   };
   const step = (d) => setShot((v) => (v + d + work[active].shots.length) % work[active].shots.length);
   useEffect(() => setShot(0), [active]);
+
+  // on phones each clip plays on its own while it is on screen; a tap pauses or resumes it
+  useEffect(() => {
+    if (prefersReduced()) return;
+    const vids = [...document.querySelectorAll('.human .row-shots video')];
+    const paused = new WeakSet();
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting && !paused.has(e.target)) e.target.play().catch(() => {});
+          else e.target.pause();
+        }),
+      { threshold: 0.5 }
+    );
+    const onTap = (e) => {
+      const v = e.currentTarget;
+      if (v.paused) {
+        paused.delete(v);
+        v.play().catch(() => {});
+      } else {
+        paused.add(v);
+        v.pause();
+      }
+    };
+    vids.forEach((v) => {
+      io.observe(v);
+      v.addEventListener('click', onTap);
+    });
+    return () => {
+      io.disconnect();
+      vids.forEach((v) => v.removeEventListener('click', onTap));
+    };
+  }, []);
 
   // only the video on show plays, and only while the visitor wants it; its AI twin follows along
   useEffect(() => {
