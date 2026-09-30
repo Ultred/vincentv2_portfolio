@@ -596,6 +596,7 @@ export default function App() {
     const scrollTimeline = touchLens && CSS.supports('animation-timeline: scroll()');
     const docEl = document.documentElement;
     let scrollMax = -1;
+    let layerNudge = 0;
     const follow = () => {
       if (!scrollTimeline) layer.style.transform = `translate3d(0, ${-window.scrollY}px, 0)`;
     };
@@ -620,9 +621,15 @@ export default function App() {
       const r = vf.height > 0 ? vf : lens.getBoundingClientRect();
       if (horseArt.getBoundingClientRect().top < window.innerHeight) placeHorse();
       if (touchLens) {
-        const max = docEl.scrollHeight - docEl.clientHeight;
+        // the scroll range shrinks when a phone's address bar hides, so measure it against the live
+        // viewport height, not the fixed one
+        const max = Math.max(0, docEl.scrollHeight - window.innerHeight);
         if (max !== scrollMax) el.style.setProperty('--scroll-max', `${(scrollMax = max)}px`);
         follow();
+        // and whatever is left over (the bar mid-animation, a browser's own rounding) is trued up
+        // every frame, so the two layers can never drift apart
+        const off = human.getBoundingClientRect().top - layer.getBoundingClientRect().top;
+        if (Math.abs(off) > 0.5) layer.style.translate = `0 ${(layerNudge += off)}px`;
         win.style.clipPath = `inset(${r.top}px ${win.clientWidth - r.right}px ${win.clientHeight - r.bottom}px ${r.left}px)`;
         if (humanPreview.offsetParent) {
           const d = humanPreview.getBoundingClientRect().top - aiPreview.getBoundingClientRect().top;
