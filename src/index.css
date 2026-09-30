@@ -215,7 +215,8 @@ em {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 9;
+  /* above the nav, so the close button stays tappable wherever the card is dragged */
+  z-index: 11;
   width: min(300px, calc(100vw - 32px));
   padding: 14px 20px 18px;
   display: grid;
@@ -1368,7 +1369,8 @@ em {
     font-size: 14px;
   }
 
-  .nav-links a {
+  .nav-links a,
+  .nav-name {
     padding: 12px 0;
   }
 
@@ -1620,7 +1622,7 @@ em {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 11;
+  z-index: 12;
   margin: 0;
   pointer-events: none;
   opacity: 0;

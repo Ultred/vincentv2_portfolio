@@ -474,7 +474,7 @@ export default function App() {
     let drag = null;
     const onDown = (e) => {
       if (e.button !== 0) return;
-      drag = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, live: false, id: e.pointerId };
+      drag = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, live: false, id: e.pointerId, mouse: e.pointerType === 'mouse' };
       // follow the pointer anywhere, so a quick flick off the card still drags it
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
@@ -503,9 +503,15 @@ export default function App() {
       clampToView();
     };
     const onUp = () => {
-      if (drag?.live) {
-        // swallow the click that ends a drag so links in the card don't fire
-        lens.addEventListener('click', (ev) => { ev.preventDefault(); ev.stopPropagation(); }, { capture: true, once: true });
+      // a mouse drag ends in a click; swallow it so links in the card don't fire. Touch drags end
+      // without one, so a guard left waiting would eat the next real tap (the close button needed two).
+      if (drag?.live && drag.mouse) {
+        const swallow = (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+        };
+        lens.addEventListener('click', swallow, { capture: true, once: true });
+        setTimeout(() => lens.removeEventListener('click', swallow, { capture: true }), 0);
       }
       drag = null;
       lens.classList.remove('is-dragging');
