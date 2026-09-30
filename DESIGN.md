@@ -249,12 +249,24 @@ The name card and the lens are the same object. Fixed, 300px wide, a 22% black w
 - **Home:** 10% from the left, vertically centred (desktop); centred near the bottom (mobile).
 - **Docked:** once the hero scrolls 55% past, the collapsible block folds closed (0.7s grid-row transition), the name hides, and the card moves to the bottom-right as a slim player bar (1s expo in-out). Scrolling back restores it.
 - **Taken:** after the first real drag (5px threshold) the card stays a full lens wherever it was left and stops docking. It is clamped 8px inside the viewport on move and resize.
-- **Dragging:** frame lines turn pink with the drag glow; the click that ends a mouse drag is swallowed so index links do not fire (touch drags end without a click, so no guard is left waiting to eat the next tap). The card sits above the nav (z 11) so its close button stays tappable anywhere; the censor tag sits above both (z 12).
+- **Dragging:** frame lines turn pink with the drag glow; the click that ends a drag is swallowed so index links do not fire, except after a touch drag, which ends without a click (a guard left waiting would eat the next tap). On phones (820px and below) the card sits above the nav (z 11) so its close button stays tappable anywhere, and the censor tag above both (z 12); desktop keeps card 9, nav 10, tag 11.
 - **Keyboard:** the grip is a button; arrow keys move the card 20px, 60px with Shift.
 - **What it reveals:** every frame the AI layer is clip-pathed to the card's rectangle, and the three.js machine scene is rendered with a scissor into the same rectangle (translated into the canvas's parallaxed space). The censor tag "AI safe search: on" appears only when the card covers the fresco's censored spot.
+- **On touch screens:** a native finger scroll runs off the main thread, so a lens cut in page space trails the finger. There the AI layer sits in a fixed `.ai-window` clipped to the card in viewport space (the card never moves with the scroll), and the layer slides up with the page through a `scroll(root)` animation timeline (compositor-synced), falling back to the scroll event where timelines are missing. The lens stays on while scrolling. The AI copy of the sticky work preview is moved by hand to match. On desktop `.ai-window` is `display: contents` and the original page-space clip runs unchanged.
+- **Phone clips:** the in-row Work clips on phones play and pause with their AI twins, so the lens shows them moving.
 
 ### AI Layer (signature)
 A second, inert render of the same sections (`aria-hidden`, `inert`, all controls `tabindex=-1`), stacked over the human layer and clipped to the lens. It restyles rather than relayouts: void ground, a 40px blue grid on Work, cyan stroked titles, lilac secondary text, pink numerals and frames, true-colour media, the contact painting crushed to high-contrast gray and multiplied through a blue-to-pink gradient with scanlines. Elements carrying a `data-ai` label get a 1px pink detection box at 3px offset with a mono chip reading like a classifier output ("project · 0.99", "cta · mailto", "local time"). The live preview video's twin is kept in sync within 0.25s.
+
+### AI-View Easter Eggs
+Jokes that exist only under the lens, in the machine's voice (mono pink chips, detection boxes):
+- **Bubble gum:** the hologram bust blows a pink gum bubble while the lens covers its lips. The mouth is found on the model itself (nose tip and chin along the face line, lips between). The bubble grows in real time (not per frame), quivers as it nears bursting, then pops: a flash ring and 26 gum shreds that spin out and fall, leaving the lips clean. With reduced motion it holds still at full size.
+- **The spark:** a white-hot point between God's and Adam's fingertips on the neon fresco, with a pink halo, cyan anamorphic streaks and a slow pulse. Its chip reads "handshake · 200 OK". On phones the fresco sits a little right (x 1.65 instead of 0.4) so the spark stays reachable.
+- **God:** "admin · sudo access" (desktop; off screen on phones).
+- **Adam:** the existing "AI safe search: on" censor (desktop).
+- **Whistlejacket:** a detection box on the horse's head reading "dog · 0.51", placed over the cover-fit painting from its rendered box, so it follows the scroll zoom.
+- **Retired archive items:** read "404 · gone fishing" instead of "Retired".
+- **Manila clock:** "local time · human probably asleep" before 6am and "coffee not found" before 9am.
 
 ### Soundwave Player
 A single-track player inside the card: a 84 x 26px canvas of 26 white bars, a two-line meta block (Bodoni italic "Now playing"/"Paused" over the track title in 600), and one 26px round play/pause button. Bars follow the live frequency data when playing and rest as a low sine contour when paused. Hover or playing fills the button white with ink glyph. Separated by 28% white hairlines above and below, which drop when docked.
