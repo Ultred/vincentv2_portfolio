@@ -90,7 +90,7 @@ function plinthParts() {
 
 export function createHeroScene(canvas, { reduced, onReady }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 820 ? 1.25 : 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.05;
@@ -218,7 +218,8 @@ export function createHeroScene(canvas, { reduced, onReady }) {
     const viewH = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 13.2;
     const viewW = viewH * camera.aspect;
     const imgAspect = 3572 / 1663;
-    const coverW = Math.max(viewW, viewH * imgAspect) * 1.18;
+    // phones are tall, so the fresco needs more room above the camera
+    const coverW = Math.max(viewW, viewH * imgAspect) * (wide ? 1.18 : 1.55);
     backdrop.scale.set(coverW, coverW / imgAspect, 1);
   }
 
@@ -243,7 +244,7 @@ export function createHeroScene(canvas, { reduced, onReady }) {
       stage.rotation.y = spin;
     }
     backdrop.position.x = (wide ? 1.1 : 0.4) - mx * 0.6;
-    backdrop.position.y = 0.6 + my * 0.3;
+    backdrop.position.y = (wide ? 0.6 : 1.05) + my * 0.3;
     holo.uniforms.uTime.value = reduced ? 1.5 : t;
     neonBackdrop.material.uniforms.uTime.value = reduced ? 1.5 : t;
     neonBackdrop.position.copy(backdrop.position);

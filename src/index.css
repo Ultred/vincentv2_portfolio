@@ -825,13 +825,96 @@ em {
   opacity: 0.75;
 }
 
+.card-view {
+  display: none;
+}
+
 /* phones and small tablets */
 @media (max-width: 820px) {
+  /* the lens becomes a viewfinder, and the text below it gets a solid panel */
+  .card {
+    --view: 132px;
+    padding-top: 0;
+    background: linear-gradient(to bottom, transparent 0 var(--view), #05040a var(--view));
+    text-shadow: none;
+  }
+
+  .card-view {
+    position: relative;
+    display: block;
+    height: var(--view);
+    margin: 0 -20px 12px;
+    background:
+      linear-gradient(#fff, #fff) 12px 12px / 14px 1px no-repeat,
+      linear-gradient(#fff, #fff) 12px 12px / 1px 14px no-repeat,
+      linear-gradient(#fff, #fff) calc(100% - 12px) 12px / 14px 1px no-repeat,
+      linear-gradient(#fff, #fff) calc(100% - 12px) 12px / 1px 14px no-repeat,
+      linear-gradient(#fff, #fff) 12px calc(100% - 12px) / 14px 1px no-repeat,
+      linear-gradient(#fff, #fff) 12px calc(100% - 12px) / 1px 14px no-repeat,
+      linear-gradient(#fff, #fff) calc(100% - 12px) calc(100% - 12px) / 14px 1px no-repeat,
+      linear-gradient(#fff, #fff) calc(100% - 12px) calc(100% - 12px) / 1px 14px no-repeat;
+  }
+
+  .card-view span {
+    position: absolute;
+    left: 32px;
+    top: 7px;
+    padding: 1px 5px;
+    background: #ff2bd6;
+    color: #05040a;
+    font: 600 10px/1.4 ui-monospace, Menlo, Consolas, monospace;
+  }
+
+  .card.is-docked {
+    padding-top: 10px;
+    background: #05040a;
+  }
+
+  .card.is-docked .card-view {
+    display: none;
+  }
+
+  .card.is-docked.is-scanning {
+    --view: 96px;
+    padding-top: 0;
+    background: linear-gradient(to bottom, transparent 0 var(--view), #05040a var(--view));
+  }
+
+  .card.is-docked.is-scanning .card-view {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .card-grip {
+    width: 44px;
+    height: 44px;
+    margin: -13px -14px -13px -16px;
+  }
+
+  .player-controls button {
+    width: 44px;
+    height: 44px;
+  }
+
+  .row-visit {
+    padding: 12px 0;
+    margin-bottom: 8px;
+  }
+
   .nav {
     grid-template-columns: 1fr auto;
   }
 
   .nav-links {
+    gap: 18px;
+    font-size: 14px;
+  }
+
+  .nav-links a {
+    padding: 12px 0;
+  }
+
+  .nav-pill {
     display: none;
   }
 

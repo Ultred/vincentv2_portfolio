@@ -248,6 +248,7 @@ export default function App() {
   useEffect(() => {
     const reduced = prefersReduced();
     const quick = seenBefore();
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const el = root.current;
     const lens = card.current;
     const layer = aiLayer.current;
@@ -316,7 +317,8 @@ export default function App() {
     };
     const dockSpot = () => {
       const r = lens.getBoundingClientRect();
-      return { x: window.innerWidth - r.width - edge(), y: window.innerHeight - r.height - edge() };
+      const narrow = window.innerWidth < 820;
+      return { x: narrow ? (window.innerWidth - r.width) / 2 : window.innerWidth - r.width - edge(), y: window.innerHeight - r.height - edge() };
     };
     const place = (p, animate) => {
       pos.x = p.x;
@@ -356,13 +358,20 @@ export default function App() {
       start: 'top top',
       end: '55% top',
       onLeave: () => setDock(true),
-      onEnterBack: () => setDock(false),
+      onEnterBack: () => {
+        lens.classList.remove('is-scanning');
+        setDock(false);
+      },
     });
 
     let drag = null;
     const onDown = (e) => {
       if (e.button !== 0) return;
       drag = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y, live: false, id: e.pointerId };
+      // follow the pointer anywhere, so a quick flick off the card still drags it
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
     };
     const onMove = (e) => {
       if (!drag) return;
@@ -370,9 +379,12 @@ export default function App() {
       if (!drag.live && Math.hypot(dx, dy) < 5) return;
       if (!drag.live) {
         lens.setPointerCapture(drag.id);
-        if (isDocked) {
+        // desktop opens the full lens; phones keep the slim bar and just open its viewfinder
+        if (isDocked && fine) {
           isDocked = false;
           setDocked(false);
+        } else if (isDocked) {
+          lens.classList.add('is-scanning');
         }
       }
       drag.live = true;
@@ -389,6 +401,9 @@ export default function App() {
       }
       drag = null;
       lens.classList.remove('is-dragging');
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     };
     const onKey = (e) => {
       const step = e.shiftKey ? 60 : 20;
@@ -400,9 +415,6 @@ export default function App() {
       clampToView();
     };
     lens.addEventListener('pointerdown', onDown);
-    lens.addEventListener('pointermove', onMove);
-    lens.addEventListener('pointerup', onUp);
-    lens.addEventListener('pointercancel', onUp);
     lens.addEventListener('keydown', onKey);
     const onResize = () => (moved ? clampToView() : place(isDocked ? dockSpot() : home()));
     window.addEventListener('resize', onResize);
@@ -415,14 +427,36 @@ export default function App() {
       scene?.state.target.set((e.clientX / window.innerWidth - 0.5) * 2, (e.clientY / window.innerHeight - 0.5) * 2);
     };
     if (!reduced) window.addEventListener('pointermove', onPointer, { passive: true });
+    // on touch screens the lens steps aside while a finger is scrolling, so it never trails
+    let touchScrolling = false;
+    let scrollIdle;
+    const onScroll = () => {
+      if (fine) return;
+      touchScrolling = true;
+      clearTimeout(scrollIdle);
+      scrollIdle = setTimeout(() => (touchScrolling = false), 140);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    const viewfinder = lens.querySelector('.card-view');
+
     const frame = () => {
       const live = el.querySelector('.human .preview-frame video[data-live]');
       if (live) {
         const twin = el.querySelector(`.ai-layer .preview-frame video[src="${live.getAttribute('src')}"]`);
         if (twin && Math.abs(twin.currentTime - live.currentTime) > 0.25) twin.currentTime = live.currentTime;
       }
-      const r = lens.getBoundingClientRect();
+      const vf = viewfinder.getBoundingClientRect();
+      const r = vf.height > 0 ? vf : lens.getBoundingClientRect();
       const top = r.top + window.scrollY;
+      if (touchScrolling) {
+        layer.style.clipPath = 'inset(50%)';
+        censorTag.classList.remove('is-on');
+        if (scene) {
+          scene.state.lens = null;
+          scene.render(performance.now());
+        }
+        return;
+      }
       const w = human.offsetWidth, h = human.offsetHeight;
       layer.style.clipPath = `inset(${top}px ${w - r.right}px ${h - (top + r.height)}px ${r.left}px)`;
       const hr = heroEl.getBoundingClientRect();
@@ -481,13 +515,15 @@ export default function App() {
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('resize', onResize);
       lens.removeEventListener('pointerdown', onDown);
-      lens.removeEventListener('pointermove', onMove);
-      lens.removeEventListener('pointerup', onUp);
-      lens.removeEventListener('pointercancel', onUp);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
       lens.removeEventListener('keydown', onKey);
       clearTimeout(landing);
       el.removeEventListener('click', onAnchor);
       gone = true;
+      window.removeEventListener('scroll', onScroll);
+      clearTimeout(scrollIdle);
       scene?.dispose();
       ctx.revert();
       lenis?.destroy();
@@ -515,6 +551,9 @@ export default function App() {
         <span className="frame-line right" aria-hidden="true" />
         <span className="frame-line bottom" aria-hidden="true" />
         <span className="frame-line left" aria-hidden="true" />
+        <div className="card-view" aria-hidden="true">
+          <span>AI view</span>
+        </div>
         <p className="card-hint">
           <button type="button" className="card-grip" aria-label="Move the card with the arrow keys">
             <Grip />
