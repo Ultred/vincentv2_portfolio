@@ -286,6 +286,8 @@ export default function App() {
   const [docked, setDocked] = useState(false);
   const [shot, setShot] = useState(0);
   const [videoOn, setVideoOn] = useState(() => !prefersReduced());
+  // videos hold off until the intro is under way, so on a first visit the 3D scene gets the bandwidth
+  const [mediaReady, setMediaReady] = useState(false);
   const [screens, setScreens] = useState(null);
   const hoverTimer = useRef(null);
 
@@ -302,19 +304,12 @@ export default function App() {
   useEffect(() => setShot(0), [active]);
 
   // on phones each clip plays on its own while it is on screen; a tap pauses or resumes it.
-  // Its AI twin plays along, so the lens shows it moving too.
+  // Its AI twin plays along whenever the lens is over it (see the frame loop).
   useEffect(() => {
     if (prefersReduced()) return;
     const vids = [...document.querySelectorAll('.human .row-shots video')];
-    const twinOf = (v) => document.querySelector(`.ai-layer .row-shots video[src="${v.getAttribute('src')}"]`);
-    const play = (v) => {
-      v.play().catch(() => {});
-      twinOf(v)?.play().catch(() => {});
-    };
-    const pause = (v) => {
-      v.pause();
-      twinOf(v)?.pause();
-    };
+    const play = (v) => v.play().catch(() => {});
+    const pause = (v) => v.pause();
     const paused = new WeakSet();
     const io = new IntersectionObserver(
       (entries) =>
@@ -344,17 +339,12 @@ export default function App() {
     };
   }, []);
 
-  // only the video on show plays, and only while the visitor wants it; its AI twin follows along
+  // only the video on show plays: the live one, once the page has settled, and only where the preview is
+  // actually displayed (phones hide it). Its AI twin is started by the lens, only when the lens is over it.
   useEffect(() => {
     document.querySelectorAll('.human .preview-frame video').forEach((v) => {
-      const twin = document.querySelector(`.ai-layer .preview-frame video[src="${v.getAttribute('src')}"]`);
-      if (v.hasAttribute('data-live')) {
-        v.play().catch(() => {});
-        twin?.play().catch(() => {});
-      } else {
-        v.pause();
-        twin?.pause();
-      }
+      if (mediaReady && v.hasAttribute('data-live') && v.offsetParent) v.play().catch(() => {});
+      else v.pause();
     });
   });
 
@@ -410,10 +400,12 @@ export default function App() {
     // lands mid-animation; a slow connection gets the intro after 2.5s anyway, over the static painting
     let startIntro = () => {};
     let introStarted = false;
+    let mediaTimer;
     const beginIntro = () => {
       if (introStarted) return;
       introStarted = true;
       startIntro();
+      mediaTimer = setTimeout(() => setMediaReady(true), 1200);
     };
     const introCap = setTimeout(beginIntro, 2500);
     heroSceneModule
@@ -631,12 +623,20 @@ export default function App() {
     const aiPreview = layer.querySelector('.preview');
     let aiPreviewShift = 0;
     const viewfinder = lens.querySelector('.card-view');
+    const videoPairs = [...el.querySelectorAll('.human .preview-frame video, .human .row-shots video')]
+      .map((v) => [v, layer.querySelector(`${v.closest('.row-shots') ? '.row-shots' : '.preview-frame'} video[src="${v.getAttribute('src')}"]`)])
+      .filter(([, twin]) => twin);
 
     const frame = () => {
-      const live = el.querySelector('.human .preview-frame video[data-live]');
-      if (live) {
-        const twin = el.querySelector(`.ai-layer .preview-frame video[src="${live.getAttribute('src')}"]`);
-        if (twin && Math.abs(twin.currentTime - live.currentTime) > 0.25) twin.currentTime = live.currentTime;
+      // a video's AI twin only plays (and only downloads) while the lens is over it, in step with the original
+      const lensBox = (viewfinder.getBoundingClientRect().height > 0 ? viewfinder : lens).getBoundingClientRect();
+      for (const [human, twin] of videoPairs) {
+        const t = twin.getBoundingClientRect();
+        const under = !human.paused && t.width > 0 && t.right > lensBox.left && t.left < lensBox.right && t.bottom > lensBox.top && t.top < lensBox.bottom;
+        if (under) {
+          if (twin.paused) twin.play().catch(() => {});
+          if (Math.abs(twin.currentTime - human.currentTime) > 0.25) twin.currentTime = human.currentTime;
+        } else if (!twin.paused) twin.pause();
       }
       const vf = viewfinder.getBoundingClientRect();
       const r = vf.height > 0 ? vf : lens.getBoundingClientRect();
@@ -769,6 +769,7 @@ export default function App() {
       lens.removeEventListener('keydown', onKey);
       clearTimeout(landing);
       clearTimeout(introCap);
+      clearTimeout(mediaTimer);
       closeBtn.removeEventListener('click', closeView);
       el.removeEventListener('click', onAnchor);
       gone = true;
