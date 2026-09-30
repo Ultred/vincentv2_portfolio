@@ -5,6 +5,8 @@ export default function Gallery({ item, onClose }) {
   const dialog = useRef(null);
   const strip = useRef(null);
   const [colour, setColour] = useState(false);
+  // the tour plays on its own once the visitor opens it, unless they asked for less motion
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   useEffect(() => {
     const d = dialog.current;
@@ -57,8 +59,12 @@ export default function Gallery({ item, onClose }) {
           <ol ref={strip} className="viewer-strip" onWheel={onWheel} tabIndex={0} aria-label={`${item.title} screens`}>
             {item.screens.map((s) => (
               <li key={s.src}>
-                <figure>
-                  <img src={s.src} alt={s.alt} loading="lazy" decoding="async" />
+                <figure className={s.video ? 'is-video' : undefined}>
+                  {s.video ? (
+                    <video src={s.video} poster={s.src} width="1080" height="504" aria-label={s.alt} controls muted loop playsInline autoPlay={!still} preload="metadata" />
+                  ) : (
+                    <img src={s.src} alt={s.alt} loading="lazy" decoding="async" />
+                  )}
                   <figcaption>
                     <span className="num">{s.no}</span> {s.label}
                   </figcaption>
@@ -66,7 +72,7 @@ export default function Gallery({ item, onClose }) {
               </li>
             ))}
           </ol>
-          <footer className="viewer-foot">
+          <footer className="viewer-foot" hidden={item.screens.length < 2}>
             <span className="ticks">
               <button type="button" onClick={() => step(-1)} aria-label="Previous screen">
                 ‹

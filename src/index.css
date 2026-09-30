@@ -1022,7 +1022,29 @@ em {
   transition: filter 0.9s var(--ease);
 }
 
-.viewer.is-true .viewer-strip img {
+.viewer-strip li:has(.is-video) {
+  display: grid;
+  align-content: center;
+  width: calc(100vw - var(--edge) * 2);
+}
+
+.viewer-strip .is-video {
+  height: auto;
+  justify-items: start;
+}
+
+/* the video keeps its own shape and fits whichever edge it meets first */
+.viewer-strip video {
+  display: block;
+  width: min(100%, calc((100dvh - 150px) * 1080 / 504));
+  height: auto;
+  border: 1px solid rgb(255 255 255 / 0.28);
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.9s var(--ease);
+}
+
+.viewer.is-true .viewer-strip img,
+.viewer.is-true .viewer-strip video {
   filter: none;
 }
 
@@ -1040,6 +1062,10 @@ em {
   display: flex;
   justify-content: flex-end;
   padding: 4px var(--edge) 16px;
+}
+
+.viewer-foot[hidden] {
+  display: none;
 }
 
 .viewer-foot .ticks {

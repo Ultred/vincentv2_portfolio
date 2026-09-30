@@ -109,5 +109,21 @@ export const archive = {
         { no: 'VI', label: 'Private', src: '/past/habitiq/private.webp', alt: 'Runs on your phone: no servers, no account, buy once.' },
       ],
     },
+    {
+      no: 'VII',
+      title: 'Tow Factory',
+      kind: 'Towing service',
+      image: '/past/tow-factory.webp',
+      // no public link by request; the item opens a recorded tour instead
+      screens: [
+        {
+          no: 'I',
+          label: 'Book a tow, then dispatch it',
+          video: '/work/tow-factory-tour.webm',
+          src: '/work/tow-factory.webp',
+          alt: 'Tour: a customer pins pickup and drop-off, books a tow, and an admin accepts it, assigns a driver and tracks the trip.',
+        },
+      ],
+    },
   ],
 };
