@@ -825,7 +825,8 @@ em {
   opacity: 0.75;
 }
 
-.card-view {
+.card-view,
+.card-close {
   display: none;
 }
 
@@ -853,6 +854,31 @@ em {
       linear-gradient(#fff, #fff) 12px calc(100% - 12px) / 1px 14px no-repeat,
       linear-gradient(#fff, #fff) calc(100% - 12px) calc(100% - 12px) / 14px 1px no-repeat,
       linear-gradient(#fff, #fff) calc(100% - 12px) calc(100% - 12px) / 1px 14px no-repeat;
+  }
+
+  .card.is-moved .card-close,
+  .card.is-scanning .card-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .card-close svg {
+    width: 12px;
+    height: 12px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
   }
 
   .card-view span {

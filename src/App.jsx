@@ -389,6 +389,7 @@ export default function App() {
       }
       drag.live = true;
       moved = true;
+      lens.classList.add('is-moved');
       lens.classList.add('is-dragging');
       gsap.killTweensOf(lens);
       place({ x: drag.ox + dx, y: drag.oy + dy });
@@ -416,6 +417,14 @@ export default function App() {
     };
     lens.addEventListener('pointerdown', onDown);
     lens.addEventListener('keydown', onKey);
+    // the close button puts the card back where it lives: docked below, or home in the hero
+    const closeView = () => {
+      moved = false;
+      lens.classList.remove('is-scanning', 'is-moved');
+      requestAnimationFrame(() => place(isDocked ? dockSpot() : home(), true));
+    };
+    const closeBtn = lens.querySelector('.card-close');
+    closeBtn.addEventListener('click', closeView);
     const onResize = () => (moved ? clampToView() : place(isDocked ? dockSpot() : home()));
     window.addEventListener('resize', onResize);
 
@@ -520,6 +529,7 @@ export default function App() {
       window.removeEventListener('pointercancel', onUp);
       lens.removeEventListener('keydown', onKey);
       clearTimeout(landing);
+      closeBtn.removeEventListener('click', closeView);
       el.removeEventListener('click', onAnchor);
       gone = true;
       window.removeEventListener('scroll', onScroll);
@@ -551,8 +561,13 @@ export default function App() {
         <span className="frame-line right" aria-hidden="true" />
         <span className="frame-line bottom" aria-hidden="true" />
         <span className="frame-line left" aria-hidden="true" />
-        <div className="card-view" aria-hidden="true">
-          <span>AI view</span>
+        <div className="card-view">
+          <span aria-hidden="true">AI view</span>
+          <button type="button" className="card-close" aria-label="Close the AI view">
+            <svg viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M2 2l8 8M10 2l-8 8" />
+            </svg>
+          </button>
         </div>
         <p className="card-hint">
           <button type="button" className="card-grip" aria-label="Move the card with the arrow keys">
