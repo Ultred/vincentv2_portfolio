@@ -185,40 +185,47 @@ function Sections({ ai, openScreens, active, shot, setShot, select, intend, step
             {!ai && <span className="sr-only"> (opens in a new tab)</span>}
           </a>
         </div>
-        <ol className="ledger">
-          {archive.items.map((p) => {
-            const inner = (
-              <>
-                <span className="entry-shot">
-                  <img src={p.image} alt="" loading="lazy" decoding="async" />
-                </span>
-                <span className="entry-text">
-                  <span className="entry-title">
-                    <span className="entry-no">{p.no}.</span> {p.title}
-                  </span>
-                  <span className={`entry-kind ${p.note ? 'is-note' : ''}`}>{p.note ?? p.kind}</span>
-                </span>
-              </>
-            );
-            return (
-              <li key={p.title} className="entry">
-                {p.href ? (
-                  <a href={p.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
-                    {inner}
-                    {!ai && <span className="sr-only"> (opens in a new tab)</span>}
-                  </a>
-                ) : p.screens ? (
-                  <button type="button" onClick={ai ? undefined : () => openScreens(p)} tabIndex={ai ? -1 : undefined} aria-haspopup="dialog">
-                    {inner}
-                    {!ai && <span className="sr-only"> (see the screens)</span>}
-                  </button>
-                ) : (
-                  <div>{inner}</div>
-                )}
-              </li>
-            );
-          })}
-        </ol>
+        {/* one set of items, then copies, so the strip can loop without a seam even on wide screens */}
+        <div className="ledger">
+          <ol className="ledger-track">
+            {[0, 1, 2].flatMap((set) =>
+              archive.items.map((p) => {
+                const copy = set > 0;
+                const skip = ai || copy ? -1 : undefined;
+                const inner = (
+                  <>
+                    <span className="entry-shot">
+                      <img src={p.image} alt="" loading="lazy" decoding="async" />
+                    </span>
+                    <span className="entry-text">
+                      <span className="entry-title">
+                        <span className="entry-no">{p.no}.</span> {p.title}
+                      </span>
+                      <span className={`entry-kind ${p.note ? 'is-note' : ''}`}>{p.note ?? p.kind}</span>
+                    </span>
+                  </>
+                );
+                return (
+                  <li key={`${p.title}-${set}`} className={`entry ${copy ? 'is-copy' : ''}`} aria-hidden={copy || undefined}>
+                    {p.href ? (
+                      <a href={p.href} target="_blank" rel="noreferrer" tabIndex={skip}>
+                        {inner}
+                        {!ai && <span className="sr-only"> (opens in a new tab)</span>}
+                      </a>
+                    ) : p.screens ? (
+                      <button type="button" onClick={ai ? undefined : () => openScreens(p)} tabIndex={skip} aria-haspopup="dialog">
+                        {inner}
+                        {!ai && <span className="sr-only"> (see the screens)</span>}
+                      </button>
+                    ) : (
+                      <div>{inner}</div>
+                    )}
+                  </li>
+                );
+              })
+            )}
+          </ol>
+        </div>
       </section>
 
       <section id={id('contact')} className="contact" aria-labelledby={ai ? undefined : 'contact-title'}>
@@ -590,6 +597,38 @@ export default function App() {
     };
     gsap.ticker.add(frame);
 
+    // the archive strip drifts left forever; it glides to a stop under the pointer or keyboard focus
+    const ledger = el.querySelector('.human .ledger');
+    const tracks = el.querySelectorAll('.ledger-track');
+    const drift = { x: 0, speed: 1, visible: false, set: 0 };
+    const measure = () => (drift.set = tracks[0].scrollWidth / 3);
+    measure();
+    const slow = (to) => gsap.to(drift, { speed: to, duration: to ? 1.2 : 0.6, ease: 'power2.out', overwrite: true });
+    const onLedgerIn = () => slow(0);
+    const onLedgerOut = (e) => {
+      if (e.type === 'focusout' && ledger.contains(e.relatedTarget)) return;
+      if (e.type === 'pointerleave' && ledger.contains(document.activeElement)) return;
+      slow(1);
+    };
+    const moveTracks = (_t, dt) => {
+      if (!drift.visible || !drift.set) return;
+      drift.x -= (dt / 1000) * 36 * drift.speed;
+      if (drift.x <= -drift.set) drift.x += drift.set;
+      tracks.forEach((t) => (t.style.transform = `translate3d(${drift.x}px, 0, 0)`));
+    };
+    const seen = new IntersectionObserver(([e]) => (drift.visible = e.isIntersecting));
+    if (!reduced) {
+      ledger.addEventListener('pointerenter', onLedgerIn);
+      ledger.addEventListener('pointerleave', onLedgerOut);
+      ledger.addEventListener('focusin', onLedgerIn);
+      ledger.addEventListener('focusout', onLedgerOut);
+      seen.observe(ledger);
+      gsap.ticker.add(moveTracks);
+      window.addEventListener('resize', measure);
+      // thumbnails arrive lazily, so measure again as they land
+      ledger.querySelectorAll('img').forEach((img) => img.addEventListener('load', measure, { once: true }));
+    }
+
     const ctx = gsap.context(() => {
       if (reduced) {
         el.classList.add('is-ready');
@@ -614,7 +653,7 @@ export default function App() {
       gsap.from('.row', { y: 40, opacity: 0, duration: 1.1, ease: 'expo.out', stagger: 0.1, scrollTrigger: { trigger: '.human .rows', start: 'top 80%' } });
       gsap.from('.preview', { clipPath: 'inset(0 0 100% 0)', duration: 1.4, ease: 'expo.inOut', scrollTrigger: { trigger: '.human .rows', start: 'top 75%' } });
 
-      gsap.from('.archive-bar > *, .entry', { y: 16, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.06, scrollTrigger: { trigger: '.human .archive', start: 'top 85%' } });
+      gsap.from('.archive-bar > *, .ledger', { y: 16, opacity: 0, duration: 1, ease: 'expo.out', stagger: 0.06, scrollTrigger: { trigger: '.human .archive', start: 'top 85%' } });
 
       gsap.fromTo('.contact-art', { scale: 1.12 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '.human .contact', start: 'top bottom', end: 'bottom bottom', scrub: true } });
       const hello = new SplitText('.hello', { type: 'chars' });
@@ -626,6 +665,13 @@ export default function App() {
       navSwap.kill();
       dockTrigger.kill();
       gsap.ticker.remove(frame);
+      gsap.ticker.remove(moveTracks);
+      seen.disconnect();
+      window.removeEventListener('resize', measure);
+      ledger.removeEventListener('pointerenter', onLedgerIn);
+      ledger.removeEventListener('pointerleave', onLedgerOut);
+      ledger.removeEventListener('focusin', onLedgerIn);
+      ledger.removeEventListener('focusout', onLedgerOut);
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('resize', onResize);
       lens.removeEventListener('pointerdown', onDown);

@@ -772,10 +772,22 @@ em {
 }
 
 .ledger {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 24px);
-  margin-top: 16px;
+  margin: 16px calc(var(--edge) * -1) 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent, #000 var(--edge), #000 calc(100% - 64px), transparent);
+}
+
+.ledger-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+/* spacing lives inside each item, so three sets measure exactly three times one set */
+.entry {
+  flex: none;
+  width: clamp(230px, 19vw, 290px);
+  padding-left: var(--edge);
 }
 
 .entry > button {
@@ -859,10 +871,16 @@ em {
   font-size: 13px;
 }
 
-@media (max-width: 1200px) and (min-width: 821px) {
+/* without motion the strip holds still and scrolls by hand, with one set only */
+@media (prefers-reduced-motion: reduce) {
   .ledger {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    row-gap: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    mask-image: none;
+  }
+
+  .entry.is-copy {
+    display: none;
   }
 }
 
@@ -1406,16 +1424,8 @@ em {
     display: none;
   }
 
-  .ledger {
-    display: flex;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
-
   .entry {
-    flex: 0 0 min(62vw, 240px);
-    scroll-snap-align: start;
+    width: min(62vw, 240px);
   }
 
   .entry > a,
