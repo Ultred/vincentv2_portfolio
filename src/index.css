@@ -215,8 +215,7 @@ em {
   position: fixed;
   top: 0;
   left: 0;
-  /* above the nav, so the close button stays tappable wherever the card is dragged */
-  z-index: 11;
+  z-index: 9;
   width: min(300px, calc(100vw - 32px));
   padding: 14px 20px 18px;
   display: grid;
@@ -1388,6 +1387,8 @@ em {
 
   .card {
     width: min(340px, 88vw);
+    /* above the nav, so the close button stays tappable wherever the card is dragged */
+    z-index: 11;
   }
 
   .work-body {
@@ -1622,7 +1623,7 @@ em {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 12;
+  z-index: 11;
   margin: 0;
   pointer-events: none;
   opacity: 0;
@@ -1648,6 +1649,13 @@ em {
 
 .censor-tag.is-on span {
   scale: 1;
+}
+
+/* on phones the card rises above the nav, so the tag rises with it */
+@media (max-width: 820px) {
+  .censor-tag {
+    z-index: 12;
+  }
 }
 
 /* the card glows while it is being dragged */
