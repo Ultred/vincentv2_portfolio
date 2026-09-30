@@ -99,6 +99,15 @@ export const archive = {
       title: 'HabitIQ',
       kind: 'Mobile app',
       image: '/past/habitiq.webp',
+      // no store link yet, so the item opens its screens instead
+      screens: [
+        { no: 'I', label: 'Hello', src: '/past/habitiq/hello.webp', alt: 'Onboarding: Habi the panda says hello, your friendly habit companion.' },
+        { no: 'II', label: 'Today', src: '/past/habitiq/today.webp', alt: "Today: the day's habits, with Habi keeping count." },
+        { no: 'III', label: 'Chat', src: '/past/habitiq/chat.webp', alt: 'Chat: setting up a habit by talking with Habi.' },
+        { no: 'IV', label: 'Progress', src: '/past/habitiq/progress.webp', alt: 'Progress: a monthly activity calendar and the best days of the week.' },
+        { no: 'V', label: 'Streaks', src: '/past/habitiq/streak.webp', alt: 'Streak stages: Habi grows from level 1 to level 100.' },
+        { no: 'VI', label: 'Private', src: '/past/habitiq/private.webp', alt: 'Runs on your phone: no servers, no account, buy once.' },
+      ],
     },
   ],
 };

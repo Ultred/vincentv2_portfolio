@@ -268,6 +268,9 @@ A sticky 16:10 figure: stone mat, 10px inset, 1px ink border. All shots are stac
 ### Archive Strip
 Earlier builds (the v1 projects plus HabitIQ) as a slim separator between Work and Contact, not a full section. An ink rule, then one line: Bodoni italic "Archive", a mid-gray "Earlier builds.", and a "See v1" visit link on the right. Below it, six projects in one row, each a whole-item link when it has a live site: a small stone-matted grayscale thumbnail (true colour under the lens), a Roman numeral with the title, and the kind, or an italic note such as "Retired" in its place. Hovering one sharpens its thumbnail and dims the other titles. At 820px the row becomes a horizontal snap-scrolling strip. It is not in the card index.
 
+### Screens Viewer
+An item with screens and no live link (HabitIQ) is a button that opens a full-screen ink `<dialog>`: the Roman numeral, title and kind top left, a white-ringed "See it as *AI* does" pill and a close button top right, then the screens in a horizontal snap-scrolling row, each framed by a 28% white hairline with a Bodoni numeral caption. Screens are grayscale until the pill is pressed; pressed, it fills white, reads "Back to gray", and the screens ease into true colour. The lens idea, offered as a toggle, because the lens cannot reach the dialog. A vertical wheel pages sideways, ‹ › buttons step one screen, Esc closes and returns focus to the item. Lenis ignores it (`data-lenis-prevent`), so the page behind never moves.
+
 ### Blog Placeholder
 The dark-page pattern alone: dimmed fresco, the giant Bodoni "Blog", one line, a pill back to the portfolio.
 

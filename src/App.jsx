@@ -6,6 +6,7 @@ import Lenis from 'lenis';
 import { archive, site, work } from './content.js';
 import Nav from './Nav.jsx';
 import Player from './Player.jsx';
+import Gallery from './Gallery.jsx';
 
 const ROMAN = ['I', 'II', 'III', 'IV'];
 
@@ -51,7 +52,7 @@ function Grip() {
 }
 
 // The page is drawn twice: the human layer everyone reads, and an AI layer the card reveals.
-function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, setVideoOn, time, canvasRef }) {
+function Sections({ ai, openScreens, active, shot, setShot, select, intend, step, videoOn, setVideoOn, time, canvasRef }) {
   const tag = (label) => (ai ? { 'data-ai': label } : {});
   const id = (name) => (ai ? undefined : name);
   return (
@@ -206,6 +207,11 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
                     {inner}
                     {!ai && <span className="sr-only"> (opens in a new tab)</span>}
                   </a>
+                ) : p.screens ? (
+                  <button type="button" onClick={ai ? undefined : () => openScreens(p)} tabIndex={ai ? -1 : undefined} aria-haspopup="dialog">
+                    {inner}
+                    {!ai && <span className="sr-only"> (see the screens)</span>}
+                  </button>
                 ) : (
                   <div>{inner}</div>
                 )}
@@ -260,6 +266,7 @@ export default function App() {
   const [docked, setDocked] = useState(false);
   const [shot, setShot] = useState(0);
   const [videoOn, setVideoOn] = useState(() => !prefersReduced());
+  const [screens, setScreens] = useState(null);
   const hoverTimer = useRef(null);
 
   // pick a project on click or focus; hover only counts once the pointer rests there
@@ -643,12 +650,14 @@ export default function App() {
       <Nav light={light} />
 
       <main className="human">
-        <Sections active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} canvasRef={humanCanvas} />
+        <Sections openScreens={setScreens} active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} canvasRef={humanCanvas} />
       </main>
 
       <div ref={aiLayer} className="ai-layer" aria-hidden="true" inert>
         <Sections ai active={active} shot={shot} setShot={setShot} select={select} intend={intend} step={step} videoOn={videoOn} setVideoOn={setVideoOn} time={time} />
       </div>
+
+      <Gallery item={screens} onClose={() => setScreens(null)} />
 
       <p className="censor-tag" aria-hidden="true">
         <span>AI safe search: on</span>
