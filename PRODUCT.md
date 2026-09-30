@@ -32,7 +32,7 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 
 - Name: Vincent Vinuya.
 - User-pinned look (2026-09-30, replaces the dark After Hours version): black, white and gray only, leaning white; editorial "Renaissance Edition" style with classical paintings in grayscale and modern type over them. References: shopify.com/editions/winter2026, grids03.obys.agency, sobha-privy-collection.com.
-- Home has three sections: hero, work, contact, plus a /blog page marked "still writing". No About/profile section, no coffee or R&B branding, no custom cursor.
+- Home has three sections: hero, work, contact, with a slim archive strip (the v1 projects) separating work and contact, plus a /blog page marked "still writing". No About/profile section, no coffee or R&B branding, no custom cursor.
 - Hero: a 3D marble bust over the fresco; the draggable name card is a lens that reveals the neon "AI view" of whatever is under it (neon is allowed only inside that lens). Screenshots under the lens show true color.
 - Music: one track (Hideaway) on repeat with a single play/pause. At the owner's request it tries to start on page load; most browsers hold it until the first click, and then it starts.
 - Icon: a really simple V. Pictorial marks were rejected as cartoonish.
@@ -44,6 +44,7 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 - Lewis Crawl — https://lewis-crawl.onrender.com/?demo — pixel-art typing dungeon crawl the crowd plays along with. A mobile game app version is coming soon (user-confirmed; no date).
 - Link Hospitality — https://link-hospitality.com/ (app: https://app.link-hospitality.com/) — all-in-one hiring platform for restaurants and hotels.
 - Screenshots captured from the live sites into public/work/.
+- Archive (first portfolio, https://vincentvportfolio.vercel.app/): Order UK, Coral, TENTS, Taste Quest, Lefty. Screenshots from that site in public/past/. TENTS (tentstabulation.com) no longer resolves and Order UK's Render service is suspended, so both show as Retired with no link. HabitIQ (mobile habit app with Habi the panda; owner-supplied banner in public/past/habitiq.webp) sits last in the strip with no link yet. Tow Factory (towing service: customer booking app plus admin dispatch) follows it with no link by the owner's choice; its item opens a 64s tour (public/work/tow-factory-tour.webm) cut from the owner's screen recording, with the OBS window, browser bars, taskbar, a Messenger chat head and the Caps Lock pop-up removed.
 - GitHub: https://github.com/Ultred · LinkedIn: https://www.linkedin.com/in/vincentvinuya33
 - No CV on the site by user decision: the projects speak for themselves.
 - Missing (placeholder, must not be faked): contact email (src/content.js). No portrait is used.
