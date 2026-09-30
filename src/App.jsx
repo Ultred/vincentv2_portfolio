@@ -404,16 +404,21 @@ export default function App() {
     const beginIntro = () => {
       if (introStarted) return;
       introStarted = true;
+      window.__loader?.done();
       startIntro();
       mediaTimer = setTimeout(() => setMediaReady(true), 1200);
     };
     const introCap = setTimeout(beginIntro, 2500);
+    // with reduced motion the page shows at once, so the loader does not hold it back
+    if (reduced) window.__loader?.done();
     heroSceneModule
       .then(({ createHeroScene }) => {
         if (gone) return;
+        window.__loader?.set(0.45);
         scene = createHeroScene(humanCanvas.current, {
           reduced,
           art: el.querySelector('.human .hero-art'),
+          onProgress: (p) => window.__loader?.set(0.45 + p * 0.5),
           onReady: () => {
             if (gone) return;
             el.classList.add('has-gl');

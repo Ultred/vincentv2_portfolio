@@ -16,8 +16,104 @@
     <meta property="og:title" content="Vincent Vinuya — Full Stack Developer" />
     <meta property="og:description" content="AI speed, human touch." />
     <meta property="og:image" content="/icon-512.png" />
+    <style>
+      /* the first-load screen: it is here, not in the bundle, so it shows before any script has loaded */
+      #loader {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        background: #0b0b0b;
+        color: #fff;
+        transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.7s;
+        /* if the app never takes over, step aside rather than hold the page */
+        animation: loader-bail 0s 8s forwards;
+      }
+      #loader.is-done {
+        opacity: 0;
+        visibility: hidden;
+      }
+      #loader .loader-name {
+        position: absolute;
+        left: clamp(16px, 2.2vw, 32px);
+        bottom: 26px;
+        font: 600 15px/1.2 'Host Grotesk Variable', 'Helvetica Neue', Arial, sans-serif;
+        letter-spacing: -0.02em;
+      }
+      #loader .loader-name span {
+        margin-left: 6px;
+        font-weight: 400;
+        opacity: 0.7;
+      }
+      #loader .loader-num {
+        position: absolute;
+        right: clamp(16px, 2.2vw, 32px);
+        bottom: 18px;
+        font: 400 clamp(56px, 9vw, 120px)/0.86 'Bodoni Moda Variable', 'Bodoni 72', Didot, serif;
+        letter-spacing: -0.035em;
+        font-variant-numeric: tabular-nums;
+      }
+      #loader .loader-line {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        background: #fff;
+        transform-origin: left;
+        transform: scaleX(var(--p, 0.04));
+        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      @keyframes loader-bail {
+        to {
+          visibility: hidden;
+          opacity: 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #loader,
+        #loader .loader-line {
+          transition: none;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div id="loader" aria-hidden="true">
+      <p class="loader-name">Vincent Vinuya<span>Portfolio ’26</span></p>
+      <p class="loader-num">00</p>
+      <span class="loader-line"></span>
+    </div>
+    <script>
+      // progress only ever moves forward; the counter eases toward it
+      (function () {
+        var el = document.getElementById('loader'), num = el.querySelector('.loader-num');
+        var target = 0.04, shown = 0, done = false;
+        function tick() {
+          if (done) return;
+          // between real steps it creeps on slowly, so it never looks stuck
+          target = Math.min(0.9, target + 0.0006);
+          shown += (target - shown) * 0.12;
+          num.textContent = String(Math.min(99, Math.round(shown * 100))).padStart(2, '0');
+          el.style.setProperty('--p', shown.toFixed(3));
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        window.__loader = {
+          set: function (p) {
+            target = Math.max(target, Math.min(0.99, p));
+          },
+          done: function () {
+            if (done) return;
+            done = true;
+            target = 1;
+            num.textContent = '100';
+            el.style.setProperty('--p', '1');
+            el.classList.add('is-done');
+            setTimeout(function () { el.remove(); }, 800);
+          },
+        };
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
