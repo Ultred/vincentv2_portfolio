@@ -773,7 +773,7 @@ em {
 
 .ledger {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: clamp(12px, 1.6vw, 24px);
   margin-top: 16px;
 }
@@ -841,10 +841,17 @@ em {
   color: var(--mid);
 }
 
-.entry > div .entry-kind {
+.entry-kind.is-note {
   font-family: var(--serif);
   font-style: italic;
   font-size: 13px;
+}
+
+@media (max-width: 1200px) and (min-width: 821px) {
+  .ledger {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: 14px;
+  }
 }
 
 /* contact */

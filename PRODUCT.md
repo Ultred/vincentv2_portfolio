@@ -44,7 +44,7 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 - Lewis Crawl — https://lewis-crawl.onrender.com/?demo — pixel-art typing dungeon crawl the crowd plays along with. A mobile game app version is coming soon (user-confirmed; no date).
 - Link Hospitality — https://link-hospitality.com/ (app: https://app.link-hospitality.com/) — all-in-one hiring platform for restaurants and hotels.
 - Screenshots captured from the live sites into public/work/.
-- Archive (first portfolio, https://vincentvportfolio.vercel.app/): Order UK, Coral, TENTS, Taste Quest, Lefty. Screenshots from that site in public/past/. TENTS (tentstabulation.com) no longer resolves, so it shows as Retired with no link.
+- Archive (first portfolio, https://vincentvportfolio.vercel.app/): Order UK, Coral, TENTS, Taste Quest, Lefty. Screenshots from that site in public/past/. TENTS (tentstabulation.com) no longer resolves, so it shows as Retired with no link. HabitIQ (mobile habit app with Habi the panda; owner-supplied banner in public/past/habitiq.webp) sits last in the strip with no link yet.
 - GitHub: https://github.com/Ultred · LinkedIn: https://www.linkedin.com/in/vincentvinuya33
 - No CV on the site by user decision: the projects speak for themselves.
 - Missing (placeholder, must not be faked): contact email (src/content.js). No portrait is used.

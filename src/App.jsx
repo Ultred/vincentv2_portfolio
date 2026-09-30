@@ -177,7 +177,7 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
           <h2 id={id('archive-title')} className="archive-title" {...tag('archive · v1')}>
             Archive
           </h2>
-          <p className="archive-line">The first edition.</p>
+          <p className="archive-line">Earlier builds.</p>
           <a className="row-visit" href={archive.href} target="_blank" rel="noreferrer" tabIndex={ai ? -1 : undefined}>
             See v1
             <Arrow />
@@ -195,7 +195,7 @@ function Sections({ ai, active, shot, setShot, select, intend, step, videoOn, se
                   <span className="entry-title">
                     <span className="entry-no">{p.no}.</span> {p.title}
                   </span>
-                  <span className="entry-kind">{p.href ? p.kind : 'Retired'}</span>
+                  <span className={`entry-kind ${p.note ? 'is-note' : ''}`}>{p.note ?? p.kind}</span>
                 </span>
               </>
             );

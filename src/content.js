@@ -54,7 +54,7 @@ export const work = [
 
 export const tapes = [{ title: 'Hideaway', src: '/music/Hideaway.m4a' }];
 
-// The first edition (v1). Earlier, smaller builds, kept as a ledger.
+// Earlier builds: the first edition (v1) and side projects, kept as a slim strip.
 export const archive = {
   href: 'https://vincentvportfolio.vercel.app/',
   items: [
@@ -77,6 +77,7 @@ export const archive = {
       title: 'TENTS',
       kind: 'Capstone',
       // the live site is gone, so it stays on record without a link
+      note: 'Retired',
       image: '/past/tents.webp',
     },
     {
@@ -92,6 +93,12 @@ export const archive = {
       kind: 'Study',
       href: 'https://ultred.github.io/Lefty_Clone/',
       image: '/past/lefty.webp',
+    },
+    {
+      no: 'VI',
+      title: 'HabitIQ',
+      kind: 'Mobile app',
+      image: '/past/habitiq.webp',
     },
   ],
 };
