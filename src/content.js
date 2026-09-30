@@ -53,3 +53,78 @@ export const work = [
 ];
 
 export const tapes = [{ title: 'Hideaway', src: '/music/Hideaway.m4a' }];
+
+// Earlier builds: the first edition (v1) and side projects, kept as a slim strip.
+export const archive = {
+  href: 'https://vincentvportfolio.vercel.app/',
+  items: [
+    {
+      no: 'I',
+      title: 'Order UK',
+      kind: 'Full stack',
+      // the Render service was suspended, so it stays on record without a link
+      note: 'Retired',
+      image: '/past/order-uk.webp',
+    },
+    {
+      no: 'II',
+      title: 'Coral',
+      kind: 'E-commerce',
+      href: 'https://coral-eccomerce-client.vercel.app/',
+      image: '/past/coral.webp',
+    },
+    {
+      no: 'III',
+      title: 'TENTS',
+      kind: 'Capstone',
+      // the live site is gone, so it stays on record without a link
+      note: 'Retired',
+      image: '/past/tents.webp',
+    },
+    {
+      no: 'IV',
+      title: 'Taste Quest',
+      kind: 'Web app',
+      href: 'https://taste-quest-olive.vercel.app/',
+      image: '/past/taste-quest.webp',
+    },
+    {
+      no: 'V',
+      title: 'Lefty',
+      kind: 'Study',
+      href: 'https://ultred.github.io/Lefty_Clone/',
+      image: '/past/lefty.webp',
+    },
+    {
+      no: 'VI',
+      title: 'HabitIQ',
+      kind: 'Mobile app',
+      image: '/past/habitiq.webp',
+      // no store link yet, so the item opens its screens instead
+      screens: [
+        { no: 'I', label: 'Hello', src: '/past/habitiq/hello.webp', alt: 'Onboarding: Habi the panda says hello, your friendly habit companion.' },
+        { no: 'II', label: 'Today', src: '/past/habitiq/today.webp', alt: "Today: the day's habits, with Habi keeping count." },
+        { no: 'III', label: 'Chat', src: '/past/habitiq/chat.webp', alt: 'Chat: setting up a habit by talking with Habi.' },
+        { no: 'IV', label: 'Progress', src: '/past/habitiq/progress.webp', alt: 'Progress: a monthly activity calendar and the best days of the week.' },
+        { no: 'V', label: 'Streaks', src: '/past/habitiq/streak.webp', alt: 'Streak stages: Habi grows from level 1 to level 100.' },
+        { no: 'VI', label: 'Private', src: '/past/habitiq/private.webp', alt: 'Runs on your phone: no servers, no account, buy once.' },
+      ],
+    },
+    {
+      no: 'VII',
+      title: 'Tow Factory',
+      kind: 'Towing service',
+      image: '/past/tow-factory.webp',
+      // no public link by request; the item opens a recorded tour instead
+      screens: [
+        {
+          no: 'I',
+          label: 'Book a tow, then dispatch it',
+          video: '/work/tow-factory-tour.webm',
+          src: '/work/tow-factory.webp',
+          alt: 'Tour: a customer pins pickup and drop-off, books a tow, and an admin accepts it, assigns a driver and tracks the trip.',
+        },
+      ],
+    },
+  ],
+};
