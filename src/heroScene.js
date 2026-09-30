@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { DecalGeometry } from 'three/examples/jsm/geometries/DecalGeometry.js';
 
 // One bust, two renders from the same camera: marble for people, a neon scan for the machine.
 const NEON_BLUE = new THREE.Color('#2b4bff');
@@ -259,6 +260,49 @@ export function createHeroScene(canvas, { reduced, onReady, onProgress, art }) {
   const popCenter = new THREE.Vector3();
   const mouthOnCanvas = new THREE.Vector3();
 
+  // a fine-line tattoo on the upper chest: the fresco's two reaching hands, traced as line art.
+  // Like ink worked into marble, it takes the stone's own light and shade; the machine sees it lit up.
+  let tattooSpot = null;
+  const tattooMap = new THREE.TextureLoader().load('/art/tattoo-creation.png', (t) => renderer.initTexture(t));
+  tattooMap.colorSpace = THREE.SRGBColorSpace;
+  tattooMap.anisotropy = 4;
+  // the machine reads the same drawing bolder: a white-hot line in a pink halo
+  const tattooGlow = new THREE.TextureLoader().load('/art/tattoo-creation-glow.png', (t) => renderer.initTexture(t));
+  tattooGlow.colorSpace = THREE.SRGBColorSpace;
+  function inkTattoo() {
+    if (!tattooSpot) return;
+    const aim = new THREE.Object3D();
+    aim.position.copy(tattooSpot.p);
+    aim.lookAt(tattooSpot.p.clone().add(tattooSpot.n));
+    aim.rotateZ(-0.06);
+    const geo = new DecalGeometry(tattooSpot.mesh, tattooSpot.p, aim.rotation, new THREE.Vector3(0.6, 0.143, 0.24));
+    const ink = new THREE.MeshStandardMaterial({
+      map: tattooMap,
+      color: 0x1c1c1c,
+      roughness: 0.85,
+      metalness: 0,
+      transparent: true,
+      opacity: 0.78,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+    });
+    const glow = new THREE.MeshBasicMaterial({
+      map: tattooGlow,
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      toneMapped: false,
+    });
+    const onMarble = new THREE.Mesh(geo, ink);
+    const onHolo = new THREE.Mesh(geo, glow);
+    onMarble.renderOrder = onHolo.renderOrder = 2;
+    humanStage.add(onMarble);
+    machineStage.add(onHolo);
+  }
+
   // find the lips on the model: scan the front half of the head for the point that sticks out
   // furthest (the nose tip), then walk down that same line to the chin; the lips sit between
   function findMouth(model) {
@@ -272,7 +316,7 @@ export function createHeroScene(canvas, { reduced, onReady, onProgress, art }) {
       d.set(-Math.sin(a), 0, -Math.cos(a));
       ray.set(o, d);
       const hit = ray.intersectObject(model, true)[0];
-      return hit ? { y, a, r: Math.hypot(hit.point.x - cx, hit.point.z - cz), p: hit.point.clone() } : null;
+      return hit ? { y, a, r: Math.hypot(hit.point.x - cx, hit.point.z - cz), p: hit.point.clone(), n: hit.face.normal.clone().transformDirection(hit.object.matrixWorld), mesh: hit.object } : null;
     };
     let nose = null;
     for (let y = box.max.y - 0.55; y <= box.max.y - 0.12; y += 0.01) {
@@ -310,6 +354,21 @@ export function createHeroScene(canvas, { reduced, onReady, onProgress, art }) {
     mouth.out.set(Math.sin(nose.a), -0.12, Math.cos(nose.a)).normalize();
     mouth.ready = true;
     state.face = { tip: line[tipAt].y.toFixed(3), dips: features.map((h) => h.y.toFixed(3)), lips: lips.y.toFixed(3) };
+    // below the chin the profile narrows to the neck, then widens to the chest; the tattoo sits on the
+    // upper chest, a tenth of a unit above where the chest comes furthest forward
+    const body = [];
+    for (let y = lips.y - 0.1; y >= box.min.y; y -= 0.01) {
+      const h = reach(y, nose.a);
+      if (h) body.push(h);
+    }
+    // the neck starts where the profile first falls under the jaw; the bust ends at the next sudden
+    // step inward (its bottom edge, above the stand), so the stand is never mistaken for the chest
+    const neckAt = body.findIndex((h) => h.r < body[0].r * 0.6);
+    if (neckAt < 0) return;
+    let endAt = body.length;
+    for (let i = neckAt + 1; i < body.length; i++) if (body[i - 1].r - body[i].r > 0.08) { endAt = i; break; }
+    const chestAt = body.slice(neckAt, endAt).reduce((best, h, i) => (h.r > body[best].r ? i + neckAt : best), neckAt);
+    tattooSpot = reach(body[chestAt].y + 0.1, nose.a);
   }
 
 
@@ -346,6 +405,7 @@ export function createHeroScene(canvas, { reduced, onReady, onProgress, art }) {
       // measure on the model's own frame, before the stage moves it
       const probeModel = src.clone(true);
       findMouth(probeModel);
+      inkTattoo();
       onProgress?.(0.6);
       warmUp(src);
     },
