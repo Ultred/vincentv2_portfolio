@@ -299,6 +299,7 @@ The dark-page pattern alone: dimmed fresco, the giant Bodoni "Blog", one line, a
 - **Do** ease with `cubic-bezier(0.16, 1, 0.3, 1)` (expo out) for CSS and `expo.out` / `expo.inOut` in GSAP.
 - **Do** make every motion answer input: pointer drift, scroll scrub, drag, 320ms hover intent, a first gesture for music, an explicit toggle for video.
 - **Do** give reduced motion a complete still page: no smooth scroll or intros, CSS transitions off, the card placed without tweening, shader time frozen, no pointer drift, videos paused by default.
+- **Do** start fetching the 3D chunk when the app boots, and hold the intro until the scene is ready (model loaded, shaders compiled, textures uploaded; 2.5s cap), so no setup work lands mid-animation. Intro pieces stay hidden until then, and the canvas is laid out from the start under the painting, which fades off it. The fresco texture reuses the page's own `<img>`.
 - **Do** keep the 3D scene a lazy chunk with the static painting shown until it mounts, the renderer pixel ratio capped at 1.5, images lazy, video `preload="none"`, and the scene rendered only while the hero is on screen.
 - **Do** keep every control keyboard reachable with the 1px currentColor focus outline at 4px offset, and label outbound links "(opens in a new tab)" for screen readers.
 

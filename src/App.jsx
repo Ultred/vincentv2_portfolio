@@ -10,6 +10,9 @@ import Gallery from './Gallery.jsx';
 
 const ROMAN = ['I', 'II', 'III', 'IV'];
 
+// the 3D scene is its own chunk; start fetching it the moment the app boots, not after the first render
+const heroSceneModule = import('./heroScene.js');
+
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const prefersReduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -403,15 +406,33 @@ export default function App() {
     // the 3D scene is its own chunk, so the page paints before three.js arrives
     let scene = null;
     let gone = false;
-    import('./heroScene.js')
+    // the intro waits for the scene (model loaded, shaders compiled, textures up), so none of that work
+    // lands mid-animation; a slow connection gets the intro after 2.5s anyway, over the static painting
+    let startIntro = () => {};
+    let introStarted = false;
+    const beginIntro = () => {
+      if (introStarted) return;
+      introStarted = true;
+      startIntro();
+    };
+    const introCap = setTimeout(beginIntro, 2500);
+    heroSceneModule
       .then(({ createHeroScene }) => {
         if (gone) return;
-        scene = createHeroScene(humanCanvas.current, { reduced });
+        scene = createHeroScene(humanCanvas.current, {
+          reduced,
+          art: el.querySelector('.human .hero-art'),
+          onReady: () => {
+            if (gone) return;
+            el.classList.add('has-gl');
+            beginIntro();
+          },
+        });
         if (import.meta.env.DEV) window.__heroScene = scene;
-        el.classList.add('has-gl');
       })
       .catch(() => {
         scene = null;
+        beginIntro();
       });
     const intro = { v: reduced ? 1 : 0 };
 
@@ -696,13 +717,16 @@ export default function App() {
     const ctx = gsap.context(() => {
       if (reduced) {
         el.classList.add('is-ready');
+        startIntro = () => {};
         return;
       }
 
       // intro: the frame inks itself in, then the painting surfaces out of the dark
       const title = new SplitText('.card-title', { type: 'lines', mask: 'lines', linesClass: 'ln' });
       const speed = quick ? 0.45 : 1;
-      const tl = gsap.timeline({ defaults: { ease: 'expo.out' }, onStart: () => el.classList.add('is-ready') });
+      const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' }, onStart: () => el.classList.add('is-ready') });
+      startIntro = () => tl.play();
+      if (introStarted) tl.play();
       tl.fromTo('.frame-line', { scale: 0 }, { scale: 1, duration: 0.7 * speed, ease: 'power3.inOut', stagger: 0.18 * speed })
         .to(intro, { v: 1, duration: 2.6 * speed, ease: 'expo.out' }, 0.3 * speed)
         .fromTo('.hero-media', { opacity: 0 }, { opacity: 1, duration: 1.6 * speed, ease: 'power2.out' }, 0.3 * speed)
@@ -744,6 +768,7 @@ export default function App() {
       window.removeEventListener('pointercancel', onUp);
       lens.removeEventListener('keydown', onKey);
       clearTimeout(landing);
+      clearTimeout(introCap);
       closeBtn.removeEventListener('click', closeView);
       el.removeEventListener('click', onAnchor);
       gone = true;
