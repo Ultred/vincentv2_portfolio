@@ -7,7 +7,8 @@ import './index.css';
 import App from './App.jsx';
 import Blog from './Blog.jsx';
 
-const isBlog = window.location.pathname.replace(/\/+$/, '') === '/blog';
+// /blog is served from blog.html (its own head for search engines); either address is the blog
+const isBlog = /^\/blog(\.html)?\/?$/.test(window.location.pathname);
 
 createRoot(document.getElementById('root')).render(<StrictMode>{isBlog ? <Blog /> : <App />}</StrictMode>);
 

@@ -58,6 +58,16 @@ A developer who builds hand in hand with AI: human taste and craft, AI speed. Th
 3. Motion is atmosphere, never a gate on content.
 4. Show the AI blend through wit, not buzzwords.
 
+## Search and Sharing
+
+`seo.js` (a Vite plugin) handles everything crawlers read, with no visual change:
+- It writes plain semantic content (name, role, projects, archive, contact) into `#root` at build time. The loader covers it and React replaces it on first render.
+- It adds ProfilePage/Person/WebSite JSON-LD, generated from `src/content.js`.
+- It adds the canonical URL (`https://www.vincentv.site/`), `rel="me"` links, and Open Graph and Twitter tags using `public/og.jpg` (1200×630).
+- It emits `blog.html` (its own title and canonical, `noindex` until posts exist), `robots.txt` and `sitemap.xml`.
+
+`vercel.json` serves `/blog` from `blog.html`. Keep `site.url` in `content.js` in sync with the live domain.
+
 ## Accessibility & Inclusion
 
 Respect prefers-reduced-motion; keyboard reachable links; text over paintings must keep readable contrast.
