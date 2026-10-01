@@ -9,6 +9,9 @@ import { archive, site, work } from './src/content.js';
 const URL = site.url;
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+// Google's ProfilePage wants a full ISO 8601 date-time with a timezone, not a bare date
+const BUILT_AT = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+
 const TITLE = `${site.name} — Full Stack Developer`;
 const DESCRIPTION = `${site.name} is a full stack developer in Pampanga, Philippines, building web apps fast with AI and finishing them by hand: Extractune, Lewis Crawl and Link.`;
 const OG_IMAGE = { url: `${URL}/og.jpg`, width: 1200, height: 630, alt: `${site.name}, full stack developer. AI speed, human touch.` };
@@ -32,7 +35,7 @@ function structuredData() {
     '@context': 'https://schema.org',
     '@graph': [
       { '@type': 'WebSite', '@id': `${URL}/#website`, url: `${URL}/`, name: site.name, inLanguage: 'en' },
-      { '@type': 'ProfilePage', '@id': `${URL}/#profile`, url: `${URL}/`, name: TITLE, description: DESCRIPTION, isPartOf: { '@id': `${URL}/#website` }, mainEntity: { '@id': `${URL}/#person` }, dateModified: new Date().toISOString().slice(0, 10) },
+      { '@type': 'ProfilePage', '@id': `${URL}/#profile`, url: `${URL}/`, name: TITLE, description: DESCRIPTION, isPartOf: { '@id': `${URL}/#website` }, mainEntity: { '@id': `${URL}/#person` }, dateModified: BUILT_AT },
       person,
     ],
   };
